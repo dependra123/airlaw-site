@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIRF 2101 — Dean's Study Hub</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg2: #171b24;
+    --bg3: #1e2433;
+    --card: #1a1f2e;
+    --border: #2a3047;
+    --accent: #4f8ef7;
+    --accent2: #7c5cbf;
+    --gold: #f0b429;
+    --green: #3dd68c;
+    --red: #f46b6b;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --tag-law: #1e3a5f;
+    --tag-law-t: #7ab3f5;
+    --tag-hist: #2d1b4e;
+    --tag-hist-t: #b48ef5;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px}
+  /* NAV */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,17,23,0.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:4px;padding:0 16px;height:52px;overflow-x:auto}
+  nav::-webkit-scrollbar{height:3px}nav::-webkit-scrollbar-thumb{background:var(--border)}
+  .nav-brand{font-size:13px;font-weight:700;color:var(--gold);letter-spacing:.5px;white-space:nowrap;margin-right:12px;padding-right:12px;border-right:1px solid var(--border)}
+  .nav-btn{padding:6px 12px;border-radius:6px;border:none;background:none;color:var(--muted);cursor:pointer;font-size:13px;white-space:nowrap;transition:all .15s}
+  .nav-btn:hover,.nav-btn.active{background:var(--bg3);color:var(--text)}
+  .nav-btn.active{color:var(--accent)}
+  /* MAIN */
+  main{margin-top:52px;max-width:1100px;margin-left:auto;margin-right:auto;padding:24px 16px 80px}
+  /* PAGE SECTIONS */
+  .page{display:none}.page.active{display:block}
+  /* CARDS */
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px}
+  .section-title{font-size:22px;font-weight:700;color:var(--text);margin-bottom:6px}
+  .section-sub{color:var(--muted);font-size:14px;margin-bottom:20px}
+  /* TOPIC CARDS */
+  .topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+  .topic-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:all .2s}
+  .topic-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .topic-num{font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:500;letter-spacing:.5px;text-transform:uppercase}
+  .topic-name{font-size:15px;font-weight:600;color:var(--text);margin-bottom:8px}
+  .topic-tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500}
+  .tag-law{background:var(--tag-law);color:var(--tag-law-t)}
+  .tag-hist{background:var(--tag-hist);color:var(--tag-hist-t)}
+  .tag-both{background:#1a2e2a;color:#5dd0a3}
+  /* DETAIL VIEW */
+  .detail-back{display:flex;align-items:center;gap:8px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;margin-bottom:20px;padding:0;transition:color .15s}
+  .detail-back:hover{color:var(--text)}
+  .detail-title{font-size:26px;font-weight:700;margin-bottom:4px}
+  .detail-sub{color:var(--muted);font-size:14px;margin-bottom:20px}
+  /* TABLES */
+  .study-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+  .study-table th{background:var(--bg3);color:var(--accent);font-weight:600;padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}
+  .study-table td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.6}
+  .study-table tr:last-child td{border-bottom:none}
+  .study-table tr:hover td{background:rgba(79,142,247,.04)}
+  /* KEY BOXES */
+  .keybox{border-radius:8px;padding:14px 16px;margin:14px 0;font-size:14px;line-height:1.7}
+  .keybox.gold{background:#221a00;border-left:3px solid var(--gold);color:#f5d788}
+  .keybox.blue{background:#0d1f3c;border-left:3px solid var(--accent);color:#a8c8f8}
+  .keybox.green{background:#0a2118;border-left:3px solid var(--green);color:#9fe8c0}
+  .keybox.red{background:#2a1010;border-left:3px solid var(--red);color:#f8a8a8}
+  .keybox strong{font-weight:700}
+  h4{font-size:16px;font-weight:600;margin:20px 0 8px;color:var(--text)}
+  h5{font-size:14px;font-weight:600;margin:14px 0 6px;color:var(--muted)}
+  ul.bullet{padding-left:20px;line-height:2;font-size:14px;color:var(--text)}
+  ul.bullet li{margin-bottom:2px}
+  /* FLASHCARDS */
+  .fc-controls{display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+  .fc-select{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;font-size:14px;cursor:pointer}
+  .fc-counter{font-size:14px;color:var(--muted);margin-left:auto}
+  .fc-scene{perspective:1000px;width:100%;max-width:640px;margin:0 auto;height:280px;cursor:pointer}
+  .fc-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s}
+  .fc-inner.flipped{transform:rotateY(180deg)}
+  .fc-front,.fc-back{position:absolute;inset:0;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;backface-visibility:hidden;text-align:center;border:1px solid var(--border)}
+  .fc-front{background:var(--card)}
+  .fc-back{background:var(--bg3);transform:rotateY(180deg)}
+  .fc-label{font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;font-weight:600}
+  .fc-question{font-size:17px;font-weight:600;color:var(--text);line-height:1.5}
+  .fc-answer{font-size:15px;color:var(--green);line-height:1.6}
+  .fc-hint{font-size:12px;color:var(--muted);margin-top:8px}
+  .fc-nav{display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+  .btn{padding:9px 20px;border-radius:8px;border:1px solid var(--border);cursor:pointer;font-size:14px;font-weight:500;transition:all .15s}
+  .btn-ghost{background:none;color:var(--text)}.btn-ghost:hover{background:var(--bg3)}
+  .btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}.btn-primary:hover{opacity:.85}
+  .btn-success{background:#0a3320;color:var(--green);border-color:#1a5038}.btn-success:hover{background:#0d4028}
+  .btn-danger{background:#2a1010;color:var(--red);border-color:#4a1a1a}.btn-danger:hover{background:#361414}
+  .fc-progress{display:flex;gap:4px;justify-content:center;margin-top:16px;flex-wrap:wrap;max-width:640px;margin-left:auto;margin-right:auto}
+  .fc-dot{width:10px;height:10px;border-radius:50%;background:var(--border);transition:background .2s}
+  .fc-dot.known{background:var(--green)}.fc-dot.review{background:var(--red)}.fc-dot.current{background:var(--accent)}
+  /* QUIZ */
+  .quiz-setup{max-width:500px;margin:0 auto;text-align:center}
+  .quiz-option-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0}
+  .quiz-cat-btn{padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text);cursor:pointer;font-size:14px;font-weight:500;transition:all .15s}
+  .quiz-cat-btn:hover,.quiz-cat-btn.selected{border-color:var(--accent);color:var(--accent);background:#0d1f3c}
+  .quiz-q-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:16px}
+  .quiz-qnum{font-size:12px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+  .quiz-qtext{font-size:16px;font-weight:600;color:var(--text);line-height:1.6;margin-bottom:20px}
+  .quiz-options{display:flex;flex-direction:column;gap:8px}
+  .quiz-opt{width:100%;text-align:left;padding:12px 16px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text);cursor:pointer;font-size:14px;line-height:1.5;transition:all .15s}
+  .quiz-opt:hover:not(:disabled){border-color:var(--accent);background:#0d1f3c}
+  .quiz-opt.correct{background:#0a2118!important;border-color:var(--green)!important;color:var(--green)!important}
+  .quiz-opt.incorrect{background:#2a1010!important;border-color:var(--red)!important;color:var(--red)!important}
+  .quiz-opt.reveal{background:#0a2118;border-color:var(--green);color:var(--green)}
+  .quiz-expl{background:var(--bg3);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--muted);line-height:1.7;margin-top:10px}
+  .quiz-progress-bar{height:4px;background:var(--border);border-radius:2px;margin-bottom:20px}
+  .quiz-progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .3s}
+  .quiz-result{text-align:center;padding:32px 16px}
+  .score-big{font-size:56px;font-weight:700;line-height:1;margin-bottom:8px}
+  .score-label{font-size:16px;color:var(--muted);margin-bottom:24px}
+  .score-breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:400px;margin:0 auto 24px}
+  .score-mini{background:var(--bg3);border-radius:8px;padding:12px;text-align:center}
+  .score-mini-n{font-size:22px;font-weight:700;color:var(--text)}
+  .score-mini-l{font-size:12px;color:var(--muted);margin-top:2px}
+  /* NUMBERS PAGE */
+  .numbers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+  .num-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px;display:flex;flex-direction:column}
+  .num-q{font-size:13px;color:var(--muted);line-height:1.5;flex:1;margin-bottom:8px}
+  .num-a{font-size:20px;font-weight:700;color:var(--gold)}
+  .num-hidden .num-a{color:var(--border);background:var(--border);border-radius:4px;cursor:pointer;user-select:none}
+  /* ACCIDENTS */
+  .accident-timeline{position:relative;padding-left:24px}
+  .accident-timeline::before{content:'';position:absolute;left:6px;top:0;bottom:0;width:2px;background:var(--border)}
+  .accident-item{position:relative;margin-bottom:24px}
+  .accident-item::before{content:'';position:absolute;left:-20px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid var(--bg)}
+  .accident-year{font-size:12px;color:var(--accent);font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+  .accident-title{font-size:15px;font-weight:600;margin-bottom:4px}
+  .accident-result{font-size:13px;color:var(--green);margin-top:4px;padding-left:12px;border-left:2px solid var(--green)}
+  /* SEARCH */
+  .search-wrap{position:relative;margin-bottom:20px}
+  .search-input{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:10px 16px 10px 40px;border-radius:8px;font-size:14px;outline:none}
+  .search-input:focus{border-color:var(--accent)}
+  .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:16px}
+  /* RESPONSIVE */
+  @media(max-width:600px){.quiz-option-grid{grid-template-columns:1fr}.score-breakdown{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">✈ AIRF 2101</div>
+  <button class="nav-btn active" onclick="showPage('home')">Home</button>
+  <button class="nav-btn" onclick="showPage('topics')">Topics</button>
+  <button class="nav-btn" onclick="showPage('numbers')">Master Numbers</button>
+  <button class="nav-btn" onclick="showPage('accidents')">Accidents</button>
+  <button class="nav-btn" onclick="showPage('flashcards')">Flashcards</button>
+  <button class="nav-btn" onclick="showPage('quiz')">Quiz</button>
+</nav>
+
+<main>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div style="text-align:center;padding:32px 0 24px">
+    <div style="font-size:40px;margin-bottom:12px">✈</div>
+    <h1 style="font-size:28px;font-weight:800;color:var(--text);margin-bottom:6px">AIRF 2101 Study Hub</h1>
+    <p style="color:var(--muted);font-size:15px;margin-bottom:28px">Air Law & Aviation History — Final Exam Edition</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;max-width:700px;margin:0 auto">
+      <div class="card" style="cursor:pointer;text-align:center" onclick="showPage('topics')">
+        <div style="font-size:28px;margin-bottom:8px">📚</div>
+        <div style="font-weight:600;margin-bottom:4px">Topics</div>
+        <div style="font-size:13px;color:var(--muted)">29 study modules</div>
+      </div>
+      <div class="card" style="cursor:pointer;text-align:center" onclick="showPage('numbers')">
+        <div style="font-size:28px;margin-bottom:8px">🔢</div>
+        <div style="font-weight:600;margin-bottom:4px">Master Numbers</div>
+        <div style="font-size:13px;color:var(--muted)">All critical numbers</div>
+      </div>
+      <div class="card" style="cursor:pointer;text-align:center" onclick="showPage('accidents')">
+        <div style="font-size:28px;margin-bottom:8px">📋</div>
+        <div style="font-weight:600;margin-bottom:4px">Accidents</div>
+        <div style="font-size:13px;color:var(--muted)">What changed</div>
+      </div>
+      <div class="card" style="cursor:pointer;text-align:center" onclick="showPage('flashcards')">
+        <div style="font-size:28px;margin-bottom:8px">🃏</div>
+        <div style="font-weight:600;margin-bottom:4px">Flashcards</div>
+        <div style="font-size:13px;color:var(--muted)">80+ cards</div>
+      </div>
+      <div class="card" style="cursor:pointer;text-align:center" onclick="showPage('quiz')">
+        <div style="font-size:28px;margin-bottom:8px">✏️</div>
+        <div style="font-weight:600;margin-bottom:4px">Quiz</div>
+        <div style="font-size:13px;color:var(--muted)">Test yourself</div>
+      </div>
+    </div>
+  </div>
+  <div class="keybox gold" style="max-width:700px;margin:0 auto">
+    <strong>⚡ Exam Format:</strong> 100 MC questions — 70 Air Law + 30 History. Golden pattern: Night ≥ Day | Controlled ≥ Uncontrolled | IFR ≥ VFR. When in doubt → go stricter.
+  </div>
+</div>
+
+<!-- TOPICS -->
+<div class="page" id="page-topics">
+  <div id="topics-list-view">
+    <div class="section-title">All Topics</div>
+    <div class="section-sub">Click any topic to study it in detail</div>
+    <div class="search-wrap"><span class="search-icon">🔍</span><input class="search-input" placeholder="Search topics..." oninput="filterTopics(this.value)" id="topicSearch"></div>
+    <div class="topic-grid" id="topicGrid"></div>
+  </div>
+  <div id="topics-detail-view" style="display:none">
+    <button class="detail-back" onclick="closeDetail()">← Back to Topics</button>
+    <div id="detail-content"></div>
+  </div>
+</div>
+
+<!-- MASTER NUMBERS -->
+<div class="page" id="page-numbers">
+  <div class="section-title">Master Numbers</div>
+  <div class="section-sub">Click any card to reveal / hide the answer. Quiz yourself daily.</div>
+  <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+    <button class="btn btn-ghost" onclick="revealAll()">Reveal All</button>
+    <button class="btn btn-ghost" onclick="hideAll()">Hide All</button>
+  </div>
+  <div class="numbers-grid" id="numbersGrid"></div>
+</div>
+
+<!-- ACCIDENTS -->
+<div class="page" id="page-accidents">
+  <div class="section-title">Major Accidents Timeline</div>
+  <div class="section-sub">Know the accident, year, cause, and what changed.</div>
+  <div class="accident-timeline" id="accidentTimeline"></div>
+</div>
+
+<!-- FLASHCARDS -->
+<div class="page" id="page-flashcards">
+  <div class="section-title">Flashcards</div>
+  <div class="section-sub">Click the card to flip. Mark each as Known or Needs Review.</div>
+  <div class="fc-controls">
+    <select class="fc-select" onchange="filterFlashcards(this.value)" id="fcFilter">
+      <option value="all">All Topics</option>
+      <option value="airlaw">Air Law Only</option>
+      <option value="history">History Only</option>
+      <option value="review">Needs Review Only</option>
+    </select>
+    <button class="btn btn-ghost" onclick="shuffleCards()">🔀 Shuffle</button>
+    <button class="btn btn-ghost" onclick="resetCards()">↺ Reset</button>
+    <span class="fc-counter" id="fcCounter"></span>
+  </div>
+  <div class="fc-scene" onclick="flipCard()">
+    <div class="fc-inner" id="fcInner">
+      <div class="fc-front"><div class="fc-label">Question</div><div class="fc-question" id="fcQ"></div><div class="fc-hint">tap to flip</div></div>
+      <div class="fc-back"><div class="fc-label">Answer</div><div class="fc-answer" id="fcA"></div></div>
+    </div>
+  </div>
+  <div class="fc-nav">
+    <button class="btn btn-ghost" onclick="prevCard()">← Prev</button>
+    <button class="btn btn-danger" onclick="markCard('review')">✗ Review</button>
+    <button class="btn btn-success" onclick="markCard('known')">✓ Known</button>
+    <button class="btn btn-ghost" onclick="nextCard()">Next →</button>
+  </div>
+  <div class="fc-progress" id="fcProgress"></div>
+</div>
+
+<!-- QUIZ -->
+<div class="page" id="page-quiz">
+  <div id="quiz-setup-view">
+    <div class="quiz-setup">
+      <div class="section-title">Quiz Mode</div>
+      <div class="section-sub">Test your knowledge with randomized questions</div>
+      <div class="quiz-option-grid">
+        <button class="quiz-cat-btn selected" id="cat-all" onclick="selectCat('all')">All Topics</button>
+        <button class="quiz-cat-btn" id="cat-airlaw" onclick="selectCat('airlaw')">Air Law</button>
+        <button class="quiz-cat-btn" id="cat-history" onclick="selectCat('history')">History</button>
+        <button class="quiz-cat-btn" id="cat-numbers" onclick="selectCat('numbers')">Numbers</button>
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="font-size:14px;color:var(--muted);display:block;margin-bottom:8px">Number of questions:</label>
+        <select class="fc-select" id="quizCount" style="width:100%">
+          <option value="10">10 questions</option>
+          <option value="20" selected>20 questions</option>
+          <option value="35">35 questions</option>
+          <option value="50">50 questions</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" style="width:100%;padding:12px" onclick="startQuiz()">Start Quiz →</button>
+    </div>
+  </div>
+  <div id="quiz-active-view" style="display:none">
+    <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quizProgFill"></div></div>
+    <div id="quizContent"></div>
+  </div>
+  <div id="quiz-result-view" style="display:none">
+    <div class="quiz-result">
+      <div class="score-big" id="resultScore"></div>
+      <div class="score-label" id="resultLabel"></div>
+      <div class="score-breakdown" id="resultBreakdown"></div>
+      <button class="btn btn-primary" onclick="retakeQuiz()" style="margin-right:8px">Retake</button>
+      <button class="btn btn-ghost" onclick="showPage('quiz')">Back to Setup</button>
+    </div>
+    <div id="quizReview" style="margin-top:20px"></div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ==================== TOPICS DATA ====================
+const topics = [
+  {id:'minvis',name:'Minimum Visibility & VMC',tag:'airlaw',short:'VMC minimums for controlled, uncontrolled, SVFR, VFR OTT',
+  content:`
+    <h4>Controlled Airspace — Always 3/500/1</h4>
+    <table class="study-table"><tr><th>Requirement</th><th>Value</th><th>Memory Hook</th></tr>
+    <tr><td>Flight Visibility</td><td>3 miles</td><td>Every class = 3 miles</td></tr>
+    <tr><td>Cloud Vertical</td><td>500 ft</td><td>5 football fields up</td></tr>
+    <tr><td>Cloud Horizontal</td><td>1 mile</td><td>One mile around the cloud</td></tr>
+    <tr><td>Visual reference</td><td>To the surface</td><td>No exceptions in controlled</td></tr>
+    <tr><td>Control Zone ground vis</td><td>3 miles (if reported)</td><td>Same as flight vis</td></tr>
+    <tr><td>Control Zone min altitude</td><td>500 ft AGL</td><td>Except T/O & landing</td></tr></table>
+    <div class="keybox blue"><strong>⚡ Controlled = 3/500/1.</strong> Memorize in that exact order.</div>
+    <h4>Uncontrolled Airspace</h4>
+    <table class="study-table"><tr><th>Condition</th><th>Vis (Day)</th><th>Vis (Night)</th><th>Cloud</th></tr>
+    <tr><td>≥ 1,000 ft AGL</td><td>1 mile</td><td>3 miles</td><td>500 ft V / <strong>2,000 ft H</strong></td></tr>
+    <tr><td>&lt; 1,000 ft AGL — Aeroplane</td><td>2 miles</td><td>3 miles</td><td>Clear of cloud</td></tr>
+    <tr><td>&lt; 1,000 ft AGL — Helicopter</td><td>1 mile</td><td>3 miles</td><td>Clear of cloud</td></tr></table>
+    <div class="keybox red"><strong>★ BIGGEST TRAP:</strong> Horizontal cloud clearance in uncontrolled ≥1,000 ft AGL = 2,000 ft — NOT 1 mile! Controlled = 1 mile. Uncontrolled = 2,000 ft.</div>
+    <h4>SVFR & VFR OTT</h4>
+    <table class="study-table"><tr><th>Type</th><th>Min Vis</th><th>Conditions</th></tr>
+    <tr><td>SVFR — Aeroplane</td><td>1 mile</td><td>Clear of cloud · Control Zone only · ATC must authorize</td></tr>
+    <tr><td>SVFR — Helicopter</td><td>½ mile</td><td>Clear of cloud · Control Zone only · ATC must authorize</td></tr>
+    <tr><td>VFR Over-the-Top</td><td>5 miles at cruise alt</td><td>Day only · 1,000 ft above cloud · Dest forecast VFR · Rating needed</td></tr></table>
+    <div class="keybox gold"><strong>1-2-3 Trick (Uncontrolled):</strong> Helicopter low day = 1 mi · Aeroplane low day = 2 mi · Everything night = 3 mi</div>`},
+
+  {id:'airspace',name:'Airspace Classification & Entry',tag:'airlaw',short:'Classes A–G, entry requirements, tower closed rules',
+  content:`
+    <table class="study-table"><tr><th>Class</th><th>VFR Entry</th><th>Tower Closed =</th><th>Memory</th></tr>
+    <tr><td><strong>A</strong></td><td>Ministerial auth only (no VFR)</td><td>N/A</td><td>Absolute restricted</td></tr>
+    <tr><td><strong>B</strong></td><td>ATC clearance OR Ministerial auth</td><td>N/A</td><td>"Be Cleared"</td></tr>
+    <tr><td><strong>C</strong></td><td>Receive clearance BEFORE entering</td><td>Class E</td><td>"C Clearance"</td></tr>
+    <tr><td><strong>D</strong></td><td>Establish 2-way radio contact</td><td>Class E</td><td>"Dial in"</td></tr>
+    <tr><td><strong>E</strong></td><td>No req — follow VMC</td><td>Stays E</td><td>Easiest controlled</td></tr>
+    <tr><td><strong>G</strong></td><td>Nothing — uncontrolled</td><td>N/A</td><td>"Go freely"</td></tr>
+    <tr><td><strong>F Restricted</strong></td><td>Authorized by designated person</td><td>N/A</td><td>Forbidden unless told</td></tr>
+    <tr><td><strong>F Advisory</strong></td><td>No restriction</td><td>N/A</td><td>Friendly warning</td></tr></table>
+    <div class="keybox red"><strong>★ C vs D EXAM TRAP:</strong> Class C = CLEARANCE to enter (ATC must say you're IN). Class D = just establish TWO-WAY CONTACT (no permission needed). Both become Class E when tower closes.</div>`},
+
+  {id:'mel',name:'Minimum Equipment List (MEL)',tag:'airlaw',short:'Categories A/B/C/D, repair times, placard requirements',
+  content:`
+    <table class="study-table"><tr><th>Concept</th><th>Details</th></tr>
+    <tr><td>What is MEL?</td><td>TC-approved document listing equipment that may be inoperative — always MORE restrictive than MMEL</td></tr>
+    <tr><td>MMEL</td><td>Master MEL — issued by manufacturer; MEL must be equal to or stricter</td></tr>
+    <tr><td><strong>Cat A</strong></td><td>Must be fixed BEFORE next flight — zero tolerance</td></tr>
+    <tr><td><strong>Cat B</strong></td><td>3 calendar days to repair</td></tr>
+    <tr><td><strong>Cat C</strong></td><td>10 calendar days to repair</td></tr>
+    <tr><td><strong>Cat D</strong></td><td>120 calendar days (cosmetic/low-risk)</td></tr>
+    <tr><td>Placard</td><td>Inoperative item MUST be placarded "INOPERATIVE"</td></tr>
+    <tr><td>No MEL?</td><td>All equipment required by CARs/type certificate must work</td></tr>
+    <tr><td>Who decides?</td><td>PIC has final say; company ops specs govern</td></tr></table>
+    <div class="keybox gold"><strong>Memory: A=Before departure · B=3 days · C=10 days · D=120 days</strong></div>`},
+
+  {id:'flightplan',name:'Flight Plan, Itinerary & Responsible Person',tag:'airlaw',short:'25 NM rule, plan vs itinerary, arrival report',
+  content:`
+    <table class="study-table"><tr><th>Concept</th><th>Rule / Detail</th></tr>
+    <tr><td>Flight PLAN</td><td>Filed with ATC. ATC tracks you. Used for IFR in controlled airspace.</td></tr>
+    <tr><td>Flight ITINERARY</td><td>Filed with RESPONSIBLE PERSON (not ATC). Used for VFR beyond 25 NM or IFR in uncontrolled.</td></tr>
+    <tr><td>Responsible Person</td><td>Person you designate on the ground with a copy of your itinerary; contacts SAR if you don't arrive. Must be reachable.</td></tr>
+    <tr><td>25 NM Rule</td><td>VFR within 25 NM: no plan needed. Beyond 25 NM: file plan OR itinerary.</td></tr>
+    <tr><td>International flights</td><td>Flight plan REQUIRED — no exceptions, no distance minimum.</td></tr>
+    <tr><td>Changes en route</td><td>Notify ATC (plan) or responsible person (itinerary) of any change.</td></tr>
+    <tr><td>Arrival report</td><td>MUST be filed upon landing — for BOTH plan and itinerary.</td></tr>
+    <tr><td>Overdue aircraft</td><td>If arrival report not filed within 1 hour of ETA → SAR initiated.</td></tr></table>
+    <div class="keybox blue"><strong>PLAN = ATC knows. ITINERARY = someone on the GROUND knows.</strong> Both require an ARRIVAL REPORT.</div>`},
+
+  {id:'altimeter',name:'Altimeter Settings & Timing',tag:'airlaw',short:'QNH vs QNE, 18,000 ft transition, when to set',
+  content:`
+    <table class="study-table"><tr><th>Region</th><th>Altitude</th><th>Detail</th></tr>
+    <tr><td>Altimeter-Setting Region</td><td>Below 18,000 ft ASL</td><td>Set QNH — local aerodrome setting. If unavailable: set aerodrome elevation.</td></tr>
+    <tr><td>Standard Pressure Region</td><td>At/above 18,000 ft ASL</td><td>Set 29.92 in Hg / 1,013.2 mb (QNE). Fly FLIGHT LEVELS.</td></tr>
+    <tr><td>When to set QNH</td><td>3 key moments</td><td>Before T/O · Nearest station in flight · Before descent</td></tr>
+    <tr><td>Transition — Climbing</td><td>Before reaching FL180</td><td>Set 29.92 BEFORE reaching FL180 (not after!)</td></tr>
+    <tr><td>Transition — Descending</td><td>Through transition alt</td><td>Reset to QNH when passing through transition altitude</td></tr></table>
+    <div class="keybox gold"><strong>Hook:</strong> Below 18,000 = local QNH. Above 18,000 = 29.92 standard. Everyone above FL180 uses same reference = consistent separation.</div>`},
+
+  {id:'night',name:'Flying at Night — Recency & Requirements',tag:'airlaw',short:'Night currency, night definition, night fuel, equipment',
+  content:`
+    <table class="study-table"><tr><th>Night Rule</th><th>Requirement</th></tr>
+    <tr><td>Night definition</td><td>End of evening civil twilight → beginning of morning civil twilight (~30 min after sunset / before sunrise)</td></tr>
+    <tr><td>Night currency</td><td>5 night T/O + 5 night landings in previous 6 months — if carrying pax at night</td></tr>
+    <tr><td>Day landings count?</td><td><strong>NO</strong> — night pax flights require NIGHT landings for currency</td></tr>
+    <tr><td>Night VFR vis (controlled)</td><td>3 miles (same as day — controlled always 3)</td></tr>
+    <tr><td>Night VFR vis (uncontrolled)</td><td>3 miles regardless of altitude</td></tr>
+    <tr><td>Night fuel — aeroplane</td><td>45 min reserve (vs 30 min day)</td></tr>
+    <tr><td>Night fuel — helicopter</td><td>20 min (same as day)</td></tr>
+    <tr><td>Required equipment</td><td>Position lights · anti-collision lights · landing light (commercial)</td></tr></table>
+    <div class="keybox red"><strong>★ TRAP:</strong> If ANY part of a passenger flight is at night → your 5 T/O and 5 landings MUST be NIGHT T/Os and landings.</div>`},
+
+  {id:'overwater',name:'Distance from Shore / Overwater Ops',tag:'airlaw',short:'602.62-602.63: Life preservers, life rafts, specific distances, helicopter cold water',
+  content:`
+    <h4>CAR 602.62 — Life Preservers (When Required)</h4>
+    <table class="study-table"><tr><th>Aircraft Type</th><th>Life Preserver Trigger</th></tr>
+    <tr><td>Any aircraft</td><td>Operating over water beyond the point where the aircraft could reach shore in the event of an engine failure → life preserver/flotation for each person on board</td></tr>
+    <tr><td>Land aeroplane, helicopter, gyroplane, airship</td><td>More than <strong>50 nautical miles from shore</strong> → life preserver for EACH person on board</td></tr>
+    <tr><td>Balloon</td><td>More than <strong>2 nautical miles from shore</strong> → life preserver/flotation for each person</td></tr></table>
+    <div class="keybox blue"><strong>Stowage rule:</strong> Life preservers must be stowed in a position easily accessible to each person WHILE SEATED. Infant life preservers may be stowed in bulk near a ditching exit if procedures exist for flight attendants to distribute them.</div>
+    <h4>CAR 602.63 — Life Rafts (Trigger Distances)</h4>
+    <table class="study-table"><tr><th>Aircraft Category</th><th>Life Rafts Required Beyond:</th></tr>
+    <tr><td>Single-engine aeroplane OR multi-engine unable to maintain flight with one engine failed</td><td><strong>100 NM</strong> or 30 minutes of flight at cruising speed (whichever is less) from a suitable emergency landing site</td></tr>
+    <tr><td>Multi-engine aeroplane ABLE to maintain flight with one engine failed</td><td><strong>200 NM</strong> or 60 minutes of flight at cruising speed (whichever is less) from a suitable emergency landing site</td></tr>
+    <tr><td>Transport category aeroplane EXCEPTION</td><td>May operate up to <strong>400 NM</strong> or 120 minutes from a suitable landing site WITHOUT life rafts (the 200 NM / 60 min rule does not apply)</td></tr>
+    <tr><td>Single-engine helicopter OR multi-engine helicopter unable to maintain flight</td><td><strong>25 NM</strong> or 15 minutes of flight at cruising speed (whichever is less) from a suitable emergency landing site</td></tr>
+    <tr><td>Multi-engine helicopter ABLE to maintain flight with one engine failed</td><td><strong>50 NM</strong> or 30 minutes of flight at cruising speed (whichever is less) from a suitable emergency landing site</td></tr></table>
+    <div class="keybox gold"><strong>Life raft capacity rule:</strong> Life rafts must be sufficient in TOTAL RATED CAPACITY to accommodate ALL persons on board.</div>
+    <h4>CAR 602.63(6) — Life Raft Stowage & Equipment Requirements</h4>
+    <ul class="bullet">
+      <li>Stowed so they are <strong>easily accessible</strong> for use in the event of a ditching</li>
+      <li>Installed in <strong>conspicuously marked locations near an exit</strong></li>
+      <li>Each life raft must be equipped with an <strong>attached survival kit</strong> sufficient for survival on water, accounting for geographic area, season, and anticipated climatic variations</li>
+      <li>The survival kit must provide means for: <strong>(i) shelter · (ii) providing or purifying water · (iii) visually signalling distress</strong></li>
+    </ul>
+    <h4>CAR 602.63(7) — Helicopter Cold Water Rule (&lt;10°C)</h4>
+    <div class="keybox red"><strong>Where water temperature is less than 10°C:</strong> No person shall operate a helicopter over that water unless:<br>
+    (a) A <strong>helicopter passenger transportation suit system</strong> is provided for each passenger;<br>
+    (b) A <strong>helicopter crew member transportation suit system</strong> is provided for each crew member; AND<br>
+    (c) The PIC directs ALL persons to wear their suit system.<br><br>
+    <strong>Exception (602.63(9)):</strong> The passenger suit requirement does NOT apply if: the flight responds to a medical or safety emergency AND there is insufficient time to acquire suits AND a trained cabin crew member is present throughout for emergency evacuation assistance. In that case, a life preserver is provided and the PIC directs the passenger to wear it (if physically/medically able).</div>
+    <h4>Survival Equipment — Overland (CAR 602.61)</h4>
+    <ul class="bullet">
+      <li>Required when flying over sparsely populated areas where search and rescue response may be delayed</li>
+      <li>Kit must include: emergency rations · visual/audio signaling · first aid · shelter · means to start a fire</li>
+    </ul>
+    <div class="keybox blue"><strong>ELT:</strong> Emergency Locator Transmitter required and must be in operable condition for overwater operations. Activates automatically on impact or manually.</div>`},
+
+  {id:'medical',name:'Medical / Fitness (602.02)',tag:'airlaw',short:'Cat 1/3/4, 8-hour rule, 0.04% BAC, IMSAFE',
+  content:`
+    <div class="keybox red"><strong>★ CORRECTION — COMMON EXAM TRAP:</strong> CPL requires Category 1 medical to exercise CPL commercial privileges. Category 3 is for PPL — NOT CPL. This is one of the most commonly confused medical facts.</div>
+    <table class="study-table"><tr><th>Medical Category</th><th>Required For</th><th>Renewal (under 40 / 40+)</th></tr>
+    <tr><td><strong>Category 1</strong></td><td>ATPL <em>and</em> CPL — required to exercise CPL privileges commercially as PIC or co-pilot</td><td>Annual / Every 6 months</td></tr>
+    <tr><td><strong>Category 3</strong></td><td>PPL (Private Pilot Licence)</td><td>Annual / Every 24 months</td></tr>
+    <tr><td><strong>Category 4</strong></td><td>Student Pilot Permit / Recreational Pilot Permit</td><td>Annual</td></tr></table>
+    <div class="keybox gold"><strong>CPL Cat 1 Expired?</strong> A CPL holder whose Category 1 has expired CAN still exercise PPL privileges using a valid Category 3 medical — but CANNOT conduct any commercial operations (PIC/co-pilot on air taxi, charter, etc.) until Category 1 is renewed.</div>
+    <h4>Fitness Requirements (CAR 602.02)</h4>
+    <table class="study-table"><tr><th>Rule</th><th>Detail</th></tr>
+    <tr><td>8-hour rule ("bottle to throttle")</td><td>No alcohol within 8 hours of acting as any crew member</td></tr>
+    <tr><td>BAC limit</td><td>Even after 8 hrs: blood alcohol level must be &lt; 0.04% — both rules apply simultaneously</td></tr>
+    <tr><td>Medication</td><td>Self-disqualify if medication could impair performance; always check with Aviation Medical Examiner (AME)</td></tr>
+    <tr><td>Fatigue — PIC right</td><td>PIC MAY refuse flight if too fatigued (CAR 602.02); employer cannot penalize for this refusal</td></tr>
+    <tr><td>IMSAFE self-assessment</td><td><strong>I</strong>llness · <strong>M</strong>edication · <strong>S</strong>tress · <strong>A</strong>lcohol · <strong>F</strong>atigue · <strong>E</strong>motion</td></tr>
+    <tr><td>Reporting obligation</td><td>Must inform employer/chief pilot if medical condition changes in a way that could affect fitness to fly</td></tr></table>`},
+
+  {id:'nordo',name:'NORDO — No Radio Operations',tag:'airlaw',short:'MF area NORDO rules, light signals, transponder codes',
+  content:`
+    <table class="study-table"><tr><th>NORDO Concept</th><th>Rule</th></tr>
+    <tr><td>NORDO in MF area — can you land?</td><td>YES if: ground station operating AND prior notice given AND visual traffic check made</td></tr>
+    <tr><td>Circuit entry (NORDO)</td><td>Must fly at least <strong>2 sides of the rectangle</strong> before final approach</td></tr></table>
+    <h4>Light Signals from Tower</h4>
+    <table class="study-table"><tr><th>Signal</th><th>Meaning (Aircraft in Flight)</th></tr>
+    <tr><td>🟢 Green steady</td><td>Cleared to land</td></tr>
+    <tr><td>🟢 Green flashing</td><td>Cleared to taxi (on ground)</td></tr>
+    <tr><td>🔴 Red steady</td><td>Give way / continue circling</td></tr>
+    <tr><td>🔴 Red flashing</td><td>Aerodrome unsafe — do not land</td></tr>
+    <tr><td>⚪ White flashing</td><td>Land at this aerodrome, then go to apron</td></tr>
+    <tr><td>🔴🟢 Alternating</td><td>Caution</td></tr></table>
+    <h4>Transponder Codes</h4>
+    <table class="study-table"><tr><th>Code</th><th>Meaning</th></tr>
+    <tr><td><strong>7500</strong></td><td>Hijack</td></tr>
+    <tr><td><strong>7600</strong></td><td>Communications failure (NORDO)</td></tr>
+    <tr><td><strong>7700</strong></td><td>Emergency</td></tr></table>`},
+
+  {id:'dutytime',name:'Duty Time & Fatigue Regulations',tag:'airlaw',short:'Max hours, rest periods, FRMS, 28-day/365-day limits',
+  content:`
+    <table class="study-table"><tr><th>Rule</th><th>Number / Detail</th></tr>
+    <tr><td>Max flight time — 28 days</td><td>150 hours in any 28 consecutive days</td></tr>
+    <tr><td>Max flight time — 365 days</td><td>1,200 hours in any 365 consecutive days</td></tr>
+    <tr><td>Max flight time — calendar day</td><td>9 hours per calendar day (air taxi/single pilot)</td></tr>
+    <tr><td>Min rest period</td><td>8 hours free from duty within 24 hours (10 hrs preferred for reset)</td></tr>
+    <tr><td>PIC refusal right</td><td>PIC MAY refuse flight if too fatigued (CAR 602.02) — employer CANNOT penalize</td></tr>
+    <tr><td>2018 regulations</td><td>Updated fatigue rules; aligned more with international standards</td></tr>
+    <tr><td>FRMS</td><td>Fatigue Risk Management System — science-based approach used by some operators</td></tr>
+    <tr><td>Cumulative fatigue</td><td>Rules cover 24 hrs, 7 days, 28 days, 365 days — all windows simultaneously</td></tr></table>`},
+
+  {id:'oxygen',name:'Oxygen Requirements (CAR 605.31–605.32)',tag:'airlaw',short:'10,000 / 13,000 ft thresholds, transport category 1-hour minimum, pressurized aircraft rules',
+  content:`
+    <div class="keybox gold"><strong>Memory hook:</strong> "10 is fine · 10–13 = 30 minutes · 13+ = always." Two key thresholds: 10,000 ft and 13,000 ft. Rules apply to CABIN-PRESSURE altitude, not actual altitude.</div>
+
+    <h4>CAR 605.31(1) — Unpressurized Aircraft</h4>
+    <table class="study-table"><tr><th>Item</th><th>Who Needs Oxygen</th><th>When</th></tr>
+    <tr><td>1</td><td>All crew members + 10% of passengers (minimum 1 passenger)</td><td>Entire flight exceeding <strong>30 minutes</strong> at cabin-pressure altitude above 10,000 ft ASL but NOT exceeding 13,000 ft ASL</td></tr>
+    <tr><td>2a</td><td>ALL persons on board</td><td>Entire period of flight at cabin-pressure altitude above <strong>13,000 ft ASL</strong></td></tr>
+    <tr><td>2b — Air Transport Service only</td><td>ALL persons on board</td><td>A period of flight of <strong>not less than 1 hour</strong> under the conditions of item 2a (transport category aircraft carrying passengers commercially must carry at least 1 hour of O₂ supply for all persons)</td></tr></table>
+
+    <div class="keybox red"><strong>★ Transport Category Aircraft Key Rule (CAR 605.31(1) Item 2b):</strong> For an aircraft operated in an <em>air transport service</em> above 13,000 ft ASL, the oxygen supply must cover a period of <strong>not less than one (1) hour</strong> for all persons on board. This is the key distinction for transport category planes — the minimum supply is 1 hour, not just "while at altitude."</div>
+
+    <h4>CAR 605.31(2) — Pressurized Aircraft (Following Emergency Descent)</h4>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:10px">Pressurized aircraft must carry enough oxygen to continue to a suitable aerodrome after a cabin pressurization failure at the most critical point. The following minimums apply after the emergency descent:</p>
+    <table class="study-table"><tr><th>Item</th><th>Who</th><th>Minimum Supply Period</th></tr>
+    <tr><td>1a</td><td>All crew + 10% of pax (min. 1 pax)</td><td>Entire flight above 10,000–13,000 ft after pressurization failure</td></tr>
+    <tr><td>1b</td><td>All crew + 10% of pax (min. 1 pax)</td><td>Entire flight above 13,000 ft after pressurization failure</td></tr>
+    <tr><td>1c — Air transport service</td><td>All crew + 10% of pax</td><td>Not less than <strong>30 minutes</strong> (Note: descent from max altitude to 10,000 ft in 10 min, then 20 min at 10,000 ft)</td></tr>
+    <tr><td>1c(ii) — Flight crew, aircraft certified above FL250</td><td>Flight crew members only</td><td>Not less than <strong>2 hours</strong> (descent from max altitude to 10,000 ft in 10 min, then 110 min at 10,000 ft)</td></tr>
+    <tr><td>2a</td><td>All passengers</td><td>Entire flight at cabin-pressure altitude exceeding 13,000 ft</td></tr>
+    <tr><td>2b — Air transport service</td><td>All passengers</td><td>Not less than <strong>10 minutes</strong></td></tr></table>
+
+    <div class="keybox blue"><strong>Pressurized vs. Unpressurized key difference:</strong> In a pressurized aircraft, the 13,000 ft rules apply to CABIN altitude. If the cabin pressurization fails, the aircraft must have enough O₂ to support everyone during the emergency descent to a safe altitude. Flight crew on aircraft certified above FL250 need 2 hours of supply.</div>
+
+    <h4>CAR 605.32 — Use of Oxygen (Quick-Donning Masks)</h4>
+    <ul class="bullet">
+      <li>When operating at cabin-pressure altitude above 25,000 ft, one pilot must wear an oxygen mask and use supplemental oxygen at ALL times that the other pilot is absent from their station</li>
+      <li>"Quick-donning mask" = can be placed and sealed on face within 5 seconds; required for flight above FL250 in pressurized aircraft</li>
+    </ul>`},
+
+  {id:'danggoods',name:'Dangerous Goods',tag:'airlaw',short:'9 classes, TDG Act, lithium batteries, reporting',
+  content:`
+    <table class="study-table"><tr><th>Dangerous Goods</th><th>Detail</th></tr>
+    <tr><td>9 DG Classes</td><td>1=Explosives · 2=Gases · 3=Flammable liquids · 4=Flammable solids · 5=Oxidizers · 6=Toxic/infectious · 7=Radioactive · 8=Corrosives · 9=Miscellaneous</td></tr>
+    <tr><td>Operator responsibility</td><td>Must have TDG training; verify shipper's declarations; refuse non-compliant shipments</td></tr>
+    <tr><td>Passengers</td><td>Cannot carry DG — except specifically exempted items</td></tr>
+    <tr><td>Lithium batteries</td><td>Quantity-limited; spare batteries MUST be in carry-on (not checked)</td></tr>
+    <tr><td>Reporting</td><td>Any DG incident MUST be reported immediately</td></tr>
+    <tr><td>IATA DGR</td><td>Airlines follow IATA Dangerous Goods Regulations — operational manual for DG in air transport</td></tr></table>`},
+
+  {id:'category',name:'Category & Class of Aircraft',tag:'airlaw',short:'Categories, classes SEL/MEL/SES/MES, type ratings',
+  content:`
+    <table class="study-table"><tr><th>Term</th><th>Detail</th></tr>
+    <tr><td>Category (broad)</td><td>Aeroplane · Rotorcraft · Glider · Balloon · Airship · Powered lift</td></tr>
+    <tr><td>Class (within category)</td><td>Single-engine land (SEL) · Single-engine sea (SES) · Multi-engine land (MEL) · Multi-engine sea (MES)</td></tr>
+    <tr><td>Type rating</td><td>Required for specific aircraft above certain weight/complexity (e.g., jets, aircraft &gt;12,500 lb MTOW)</td></tr>
+    <tr><td>CPL(A)</td><td>Commercial Pilot Licence — Aeroplane; privileges depend on class/type ratings held</td></tr>
+    <tr><td>ATPL</td><td>Airline Transport Pilot Licence; highest level; required for PIC of large aircraft</td></tr></table>`},
+
+  {id:'ppc',name:'PPC — Pilot Proficiency Check',tag:'airlaw',short:'When required, validity 12 months, who conducts it',
+  content:`
+    <table class="study-table"><tr><th>PPC</th><th>Detail</th></tr>
+    <tr><td>What is it?</td><td>Assessed flight test by an approved check pilot; required for specific commercial operations</td></tr>
+    <tr><td>When required?</td><td>PIC of multi-engine aircraft in commercial ops (703) · PIC of single-engine IFR with non-crew pax · Some 702 ops</td></tr>
+    <tr><td>PPC validity</td><td><strong>12 months</strong> — must be renewed annually</td></tr>
+    <tr><td>Who conducts?</td><td>TC-designated check pilot (DCP) or approved company check pilot</td></tr>
+    <tr><td>PPC vs Competency Check</td><td>PPC = formal assessed check. Competency check = company-internal (less formal, 702 ops)</td></tr>
+    <tr><td>Failed PPC</td><td>Cannot exercise relevant privileges until passed</td></tr></table>`},
+
+  {id:'regdocs',name:'Regulating Documents & Bodies',tag:'airlaw',short:'Aeronautics Act, CARs, AIP, AIM, CARAC, TATC, TSB, ICAO',
+  content:`
+    <table class="study-table"><tr><th>Document / Body</th><th>What It Is</th></tr>
+    <tr><td><strong>Aeronautics Act</strong></td><td>Primary legislation — "An Act to authorize the control of aeronautics." Parliament's law. Everything flows from it.</td></tr>
+    <tr><td><strong>CARs SOR/96-433</strong></td><td>Canadian Aviation Regulations — detailed rules derived from the Act. Became law <strong>October 10, 1996</strong>.</td></tr>
+    <tr><td><strong>AIP Canada</strong></td><td>Published by NavCanada. ICAO compliant. Parts: 1=General, 2=Enroute, 3=Aerodromes. <strong>REGULATORY</strong>.</td></tr>
+    <tr><td><strong>TC AIM</strong></td><td>NOT regulatory — reference only. Published by TC. Issued twice per year (March, October).</td></tr>
+    <tr><td><strong>CARAC</strong></td><td>Canadian Aviation Regulation Advisory Council — cooperative rulemaking (government + industry). Est. July 1, 1993.</td></tr>
+    <tr><td><strong>TATC</strong></td><td>Transportation Appeal Tribunal of Canada — est. 2003; replaced Civil Aviation Tribunal; review/appeal hearings.</td></tr>
+    <tr><td><strong>TSB</strong></td><td>Transportation Safety Board — est. March 29, 1990; investigates to PREVENT recurrence, NOT assign blame. HQ: Gatineau, QC.</td></tr>
+    <tr><td><strong>CADORS</strong></td><td>Civil Aviation Daily Occurrence Reporting System — ~16,750 reports/year.</td></tr>
+    <tr><td><strong>SECURITAS</strong></td><td>Confidential safety reporting system; TSB forwards info anonymously.</td></tr>
+    <tr><td><strong>ICAO</strong></td><td>UN agency — Chicago Convention 1944; 193 members; HQ Montreal.</td></tr></table>
+    <div class="keybox blue"><strong>Key:</strong> AIP = regulatory (must comply). AIM = reference (helpful, not binding).</div>`},
+
+  {id:'sms',name:'Safety Management Systems (SMS)',tag:'both',short:'4 pillars, just culture, Swiss Cheese, reactive/proactive/predictive',
+  content:`
+    <table class="study-table"><tr><th>SMS Concept</th><th>Detail</th></tr>
+    <tr><td>ICAO definition of Safety</td><td>"The state in which the possibility of harm to persons or property damage is reduced to, and maintained at or below, an acceptable level through a continuing process of hazard identification and safety risk management"</td></tr>
+    <tr><td>Canada — world first</td><td>SMS implemented in Canada <strong>1999</strong> — FIRST IN THE WORLD. First SMS regulations: 2005.</td></tr>
+    <tr><td>4 Pillars of SMS</td><td>1. Safety Policy · 2. Safety Risk Management · 3. Safety Assurance · 4. Safety Promotion</td></tr>
+    <tr><td>SMS types</td><td>Reactive (after accident) · Proactive (before accident) · Predictive (using data). Best = proactive + predictive.</td></tr>
+    <tr><td>Just Culture</td><td>Atmosphere of trust; encourages reporting; clear line between acceptable/unacceptable behaviour. #1 = non-punitive reporting.</td></tr>
+    <tr><td>Discipline exceptions</td><td>Willful negligence · Criminal intent · Use of illicit substances</td></tr>
+    <tr><td>Swiss Cheese (Reason)</td><td>Accidents occur when holes in multiple defensive layers align. Latent failures (org) + Active failures (human) combine.</td></tr></table>
+    <div class="keybox gold"><strong>4 Pillars:</strong> Policy → Risk Management → Assurance → Promotion</div>`},
+
+  {id:'escat',name:'ESCAT Plan, ADIZ & Aviation Security',tag:'both',short:'CAR 602.145 ADIZ procedures, CAR 602.146 ESCAT, 9/11, IFSO, DB Cooper',
+  content:`
+    <h4>CAR 602.145 — ADIZ (Air Defence Identification Zone)</h4>
+    <div class="keybox blue"><strong>Definition:</strong> The ADIZ is airspace extending upward from the surface along Canada's coastlines, the dimensions of which are specified in the Designated Airspace Handbook. Any aircraft entering or operating within the ADIZ must comply with CAR 602.145.</div>
+    <h5>ADIZ Requirements — Departure Point HAS radio/filing facilities:</h5>
+    <ul class="bullet">
+      <li><strong>Before take-off:</strong> File a flight plan or flight itinerary</li>
+      <li><strong>VFR aircraft departing OUTSIDE the ADIZ:</strong> Indicate in the flight plan the estimated time and point of ADIZ entry; AND as soon as possible after take-off, radio a position report (location, altitude, aerodrome of departure, estimated ADIZ entry time and point) to ATC, FSS, or community aerodrome radio station</li>
+      <li><strong>VFR aircraft departing WITHIN the ADIZ:</strong> As soon as possible after take-off, radio a position report (location, altitude, aerodrome of departure) to ATC, FSS, or CARS</li>
+    </ul>
+    <h5>ADIZ Requirements — Departure Point LACKS filing facilities:</h5>
+    <ul class="bullet">
+      <li>As soon as possible after take-off: file a flight plan or itinerary by radiocommunication</li>
+      <li>VFR aircraft must indicate estimated time and point of ADIZ entry in the filed plan/itinerary (if applicable)</li>
+    </ul>
+    <h5>CAR 602.145(5) — VFR Deviation Reporting:</h5>
+    <div class="keybox gold">A VFR PIC must revise estimated ADIZ entry time/point and notify ATC/FSS/CARS when the aircraft is NOT expected to arrive:<br>
+    (a) Within <strong>± 5 minutes</strong> of estimated time at: a reporting point, the ADIZ entry point, or destination within ADIZ; OR<br>
+    (b) Within <strong>20 NM</strong> of: the estimated ADIZ entry point, or the centre line of the route indicated in the flight plan/itinerary.</div>
+    <h4>CAR 602.146 — ESCAT Plan (Emergency Security Control of Air Traffic)</h4>
+    <div class="keybox red"><strong>What is ESCAT?</strong> The Emergency Security Control of Air Traffic plan is activated by the Government of Canada during a national security emergency. It applies to ALL aircraft operating in Canadian domestic airspace OR the ADIZ.</div>
+    <h5>When ESCAT is implemented — PIC MUST:</h5>
+    <table class="study-table"><tr><th>Requirement</th><th>Detail (CAR 602.146)</th></tr>
+    <tr><td>(a) Before take-off</td><td>Obtain <strong>approval for the flight</strong> from the appropriate air traffic services unit — no departure without authorization</td></tr>
+    <tr><td>(b) In flight</td><td>Comply with any instruction to <strong>land, change course, or change altitude</strong> received from the appropriate ATS unit</td></tr>
+    <tr><td>(c) Position reports — in controlled airspace</td><td>As required by CAR 602.125 (normal controlled airspace position reporting)</td></tr>
+    <tr><td>(c) Position reports — outside controlled airspace</td><td>At least <strong>every 30 minutes</strong></td></tr></table>
+    <div class="keybox blue"><strong>9/11 and ESCAT context — Operation Yellow Ribbon:</strong> On September 11, 2001, U.S. airspace was shut down. 224 flights were diverted to Canada (38 aircraft; 6,656 passengers). Gander, NL hosted many aircraft for 3–4 days. This was effectively an emergency air traffic control event comparable to ESCAT activation, and it demonstrated Canada's critical role in international aviation security.</div>
+    <h4>Security — Key Canadian Events</h4>
+    <table class="study-table"><tr><th>Topic</th><th>Detail</th></tr>
+    <tr><td>CATSA created</td><td>2002 — Canadian Air Transport Security Authority; passenger and baggage screening; funded by Air Travellers Security Charge (ATSC)</td></tr>
+    <tr><td>IFSO / IFSTO</td><td>In-Flight Security Officers — RCMP officers; operate covertly under CACPP; trained in behavioural analysis, close-quarter combat, hostage negotiation; only intervene when flight deck integrity is compromised OR there is a threat of death/serious harm</td></tr>
+    <tr><td>Air India 182 (June 23, 1985)</td><td>329 killed off coast of Ireland. Bomb conceived, planned, executed entirely in Canada. 2010 inquiry: "cascading series of errors." Led to: passenger/baggage reconciliation, airport background checks, removal of baggage coin lockers, banning cameras near security checkpoints</td></tr>
+    <tr><td>DB Cooper (Nov 24, 1971)</td><td>Only unsolved air piracy in US history. Hijacked NW Orient 305 (Seattle→Portland); extorted $200K + 4 parachutes; jumped from rear stairs of 727 over WA state. Never found. Led to: "Cooper vane" locking rear stairs, pre-boarding passenger screening, sky marshals</td></tr>
+    <tr><td>Patrick Dolan Critton (Dec 26, 1971)</td><td>Canada's first (and only) hijacking — Air Canada flight, Thunder Bay to Toronto. Led to 1972 Criminal Code amendment making it an offence to bring weapons/explosives onboard aircraft</td></tr>
+    <tr><td>Transponder codes</td><td><strong>7500</strong> = Hijack · <strong>7600</strong> = Comms failure (NORDO) · <strong>7700</strong> = Emergency</td></tr></table>`},
+
+  {id:'crm',name:'History of CRM — 6 Generations',tag:'history',short:'NASA 1979, 6 generations from Charm School to TEM+LOSA',
+  content:`
+    <div class="keybox blue"><strong>Origin:</strong> 1979 NASA workshop identified failures in crew performance (poor communications, decision-making, leadership) → Birth of CRM</div>
+    <table class="study-table"><tr><th>Gen</th><th>Period</th><th>Focus</th><th>Key Hook</th></tr>
+    <tr><td><strong>1</strong></td><td>~1979–1986</td><td>Individual management; interpersonal skills; United + KLM airlines</td><td>"Charm school"</td></tr>
+    <tr><td><strong>2</strong></td><td>1986+</td><td>Team-oriented; CREW not cockpit; stress, SA, decision-making, group dynamics</td><td>Name changed: Cockpit → Crew</td></tr>
+    <tr><td><strong>3</strong></td><td>1993+</td><td>Expanded scope: FAs, dispatchers, maintenance included; CRM for Captains specifically</td><td>"Everyone included"</td></tr>
+    <tr><td><strong>4</strong></td><td>1994+</td><td>Advanced Qualification Program (AQP); CRM integrated into technical training + SOPs</td><td>AQP + SOPs</td></tr>
+    <tr><td><strong>5</strong></td><td>1996+</td><td>Error management: AVOID · TRAP · MANAGE; cognitive errors, slips, performance-degradation</td><td>3 countermeasures</td></tr>
+    <tr><td><strong>6</strong></td><td>2001+</td><td>Proactive TEM; LOSA (Line Operations Safety Audits); active threat management BEFORE they occur</td><td>TEM + LOSA</td></tr></table>
+    <div class="keybox gold"><strong>Memory Hook:</strong> 1=Charm School · 2=Team · 3=Everyone · 4=AQP+SOPs · 5=AVOID TRAP MANAGE · 6=Proactive TEM+LOSA</div>`},
+
+  {id:'tem',name:'Threat & Error Management (TEM)',tag:'history',short:'Swiss Cheese, 3 threat types, UAS, 4-step process, LOFT',
+  content:`
+    <div class="keybox blue"><strong>Developed by:</strong> University of Texas Human Factors Research Project. Key developers: James Reason, Dan Maurino, Bob Helmreich. Publication: Helmreich, Klinect & Wilhelm (1999). Recognized by ICAO, IATA, NTSB, FAA, TC.</div>
+    <table class="study-table"><tr><th>TEM Concept</th><th>Detail</th></tr>
+    <tr><td>Swiss Cheese Model (Reason 1990)</td><td>Accidents occur when holes in multiple defensive layers align. Latent failures (organizational) + Active failures (human).</td></tr>
+    <tr><td>3 Types of Threats</td><td>Expected · Unexpected · Latent</td></tr>
+    <tr><td>Unmanaged errors → UAS</td><td>Undesired Aircraft States — the result of unmanaged/mismanaged errors</td></tr>
+    <tr><td>4-Step TEM Process</td><td>1. Identify Threats → 2. Identify Errors → 3. Mitigation Strategies → 4. Risk Level Assessment</td></tr>
+    <tr><td>TEM Skill Development</td><td>LOFT (Line Oriented Flight Training) · Effective Debriefings · Safety Reports</td></tr></table>
+    <h4>LOFT — Line Oriented Flight Training</h4>
+    <table class="study-table"><tr><th>LOFT Category</th><th>Examples</th></tr>
+    <tr><td>Operational Problems</td><td>Pre-flight issues, NOTAMs, MEL items, W&B, low fuel, re-routing</td></tr>
+    <tr><td>Environmental Problems</td><td>Weather, contaminated runways, touchdown zone lighting</td></tr>
+    <tr><td>Equipment Problems</td><td>Autopilot incidents, nav aid failures, systems</td></tr>
+    <tr><td>Key stat</td><td>80% of accidents on takeoff from errors during taxi; 75% were checklist errors; ½ were behind schedule</td></tr>
+    <tr><td>Type B emergencies</td><td>Minor malfunctions cause 100% flight deviations (more dangerous than Type A!) — lead to loss of SA</td></tr></table>
+    <h4>LOSA — Line Oriented Safety Audit</h4>
+    <ul class="bullet"><li>Observational study of normal line operations</li><li>Collects data on threats, errors, and UAS in real flight</li><li>Confidential — used for system-level safety improvements</li><li>Key component of 6th generation CRM</li></ul>`},
+
+  {id:'eq',name:'Emotional Intelligence (EQ)',tag:'history',short:'5 EQ competencies, Goleman, Ekman, MacLean, Colgan Air vs Sully',
+  content:`
+    <table class="study-table"><tr><th>Researcher</th><th>Contribution</th></tr>
+    <tr><td>Paul Ekman</td><td>Facial expressions/body movements (1954); cross-cultural studies (1965); discovery of micro expressions (1967); universal facial expressions (1967-68)</td></tr>
+    <tr><td>Paul MacLean (1960s)</td><td>Triune Brain Theory: Primitive/Reptilian (physical) · Limbic/Emotional · Neocortex/Smart (motivation)</td></tr>
+    <tr><td>Daniel Goleman (PhD)</td><td>Published Emotional Intelligence Theory; psychologist, behavioural and brain scientist</td></tr></table>
+    <div class="keybox blue"><strong>EQ ≠ IQ ≠ Personality ≠ Fixed for life.</strong> Communication: Words=7% · Tone=38% · Body language=55%</div>
+    <h4>The 5 EQ Competencies</h4>
+    <table class="study-table"><tr><th>#</th><th>Competency</th><th>Description / Beware</th></tr>
+    <tr><td>1</td><td>Emotional Self-Awareness (Intrapersonal)</td><td>Know your feelings; enhances decision-making. BEWARE over-confidence.</td></tr>
+    <tr><td>2</td><td>Emotional Self-Regulation (Intrapersonal)</td><td>Manage disruptive emotions; stay positive. BEWARE being too calm (slows crew).</td></tr>
+    <tr><td>3</td><td>Emotional Self-Motivation (Intrapersonal)</td><td>Use emotions positively. BEWARE <strong>tunnel vision</strong> (overemphasis on target vs. safety).</td></tr>
+    <tr><td>4</td><td>Social Awareness (Interpersonal)</td><td>Empathize; recognize diversity; anticipate needs.</td></tr>
+    <tr><td>5</td><td>Social Skills (Interpersonal)</td><td>Set positive tone; inspire cooperation; manage conflict.</td></tr></table>
+    <div class="keybox red"><strong>Tunnel Vision — Singapore Airlines 006 (Oct 31, 2000):</strong> Captain rushed departure to beat typhoon; skipped NOTAMs; took off on closed, dark, under-construction runway. 83 killed. Classic EQ competency 3 failure.</div>
+    <div class="keybox gold"><strong>Colgan Air 3407:</strong> Captain chose "flight" reaction; talked about himself 20/40 last minutes; low EI narrowed perception; airspeed not monitored. Contrast: Sully (USAirways 1549) maintained composure throughout.</div>`},
+
+  {id:'mbti',name:'MBTI — Myers-Briggs Type Indicator',tag:'history',short:'Carl Jung, Katharine Briggs, Isabel Myers, 4 dichotomies',
+  content:`
+    <table class="study-table"><tr><th>Person</th><th>Contribution</th></tr>
+    <tr><td>Carl G. Jung (1875–1961)</td><td>Swiss psychiatrist; developed theory of personality types. "Differences between people are not random — they form patterns."</td></tr>
+    <tr><td>Katharine C. Briggs (1875–1968)</td><td>Read Jung's Psychological Types in 1923; spent 20 years developing/applying Jung's theory.</td></tr>
+    <tr><td>Isabel Briggs Myers (1897–1980)</td><td>Developed the MBTI® instrument starting 1943; partnered with Briggs.</td></tr></table>
+    <div class="keybox blue"><strong>Key:</strong> MBTI is an INDICATOR, not a test. No right or wrong types. All types have strengths and blind spots. Most widely used personality assessment in the world — 2+ million people/year, 70+ countries.</div>
+    <h4>Jung's Theory</h4>
+    <ul class="bullet"><li>Everyone takes in information AND makes decisions about it</li><li>We live in two worlds: outer (things/people/events) and inner (thoughts/feelings/reflections)</li><li>Preferences are innate ("inborn predispositions") but shaped by environment</li><li>Goal: constructive use of differences — acknowledge, value, and incorporate different perspectives</li></ul>`},
+
+  {id:'simulation',name:'History of Training & Simulation',tag:'history',short:'Link Trainer 1929, BCATP, Gosport System, terrain boards, modern sims',
+  content:`
+    <table class="study-table"><tr><th>Topic</th><th>Detail</th></tr>
+    <tr><td>Link Trainer</td><td>World's first flight simulator. Invented by <strong>Edwin Link in 1929</strong>. Electromechanical; simulated instrument flight. Used extensively in WWII BCATP.</td></tr>
+    <tr><td>BCATP Link use</td><td>British Commonwealth Air Training Plan (1940-45). 131,000 trainees across 17 Alberta schools. Link Trainers critical for instrument training.</td></tr>
+    <tr><td>Terrain Boards / Mockups</td><td>Physical scale models of terrain used in WWII mission planning. Allowed crews to "fly" missions visually. Predecessor to modern sims.</td></tr>
+    <tr><td>Modern simulators</td><td>FSTD = Flight Simulation Training Device. Level D = highest fidelity; approved for zero-flight-time type ratings. LOFT conducted in full-motion sims.</td></tr>
+    <tr><td>Gosport System (1918)</td><td>Taught dynamics of flight; how to get out of difficulties (not just avoid them). First dual-control plane comms via rubber tube headset. <strong>Still the basis of flight training today.</strong></td></tr>
+    <tr><td>Early Canadian training</td><td>Curtis Flying School Toronto: 400 min = $400. 1917: Royal Flying Corps set up 6 training fields in southern Ontario. Camp Borden = largest school.</td></tr></table>`},
+
+  {id:'automation',name:'History of Automation & Fly-By-Wire',tag:'history',short:'FBW, SHELL model, T-display, glass cockpit, MCAS, AF447',
+  content:`
+    <h4>SHELL Model (Edwards 1972)</h4>
+    <ul class="bullet"><li><strong>S</strong>oftware · <strong>H</strong>ardware · <strong>E</strong>nvironment · <strong>L</strong>iveware</li><li>Framework for human-machine interaction analysis</li></ul>
+    <h4>Flight Deck Design History</h4>
+    <table class="study-table"><tr><th>Era</th><th>Key Feature</th></tr>
+    <tr><td>Early 1950s</td><td>T-model display introduced; "Touch and Feel" philosophy; switch positions recognizable by touch</td></tr>
+    <tr><td>Glass cockpit era</td><td>"Dark Cockpit" replaced "Touch and Feel"; PFD consolidates attitude/airspeed/altitude/VSI; more info but info overload risk</td></tr>
+    <tr><td>Glass vs analog</td><td>Glass = 0.3% read error (better accuracy); BUT takes 2.3 sec vs 1.7 sec to read</td></tr>
+    <tr><td>In 60% of accidents</td><td>Root cause is in the DESIGN — Dr. Paul Fitts (1950s) focused on human-machine interactions, Fitts' Law</td></tr></table>
+    <h4>Fly-By-Wire (FBW)</h4>
+    <table class="study-table"><tr><th>FBW Concept</th><th>Detail</th></tr>
+    <tr><td>What is it?</td><td>Electronic flight control — pilot inputs → electronic signals → flight control computers → control surfaces. No mechanical linkage.</td></tr>
+    <tr><td>Advantages</td><td>Lighter weight · Envelope protection · Automated stability augmentation · Sidestick possible</td></tr>
+    <tr><td>Disadvantages</td><td>Single points of failure · Loss of tactile feedback · Over-reliance on automation · Training challenge</td></tr>
+    <tr><td>MCAS (737 MAX)</td><td>Maneuvering Characteristics Augmentation System — flawed software + inadequate training = Lion Air 610 + Ethiopian 302 (346 deaths, 2018-19). All MAX 8 grounded.</td></tr>
+    <tr><td>AF447 (2009)</td><td>Pitot tube blockage → unreliable airspeed → autopilot disconnected → crew over-relied on automation → couldn't hand-fly → stalled into Atlantic. 228 killed.</td></tr></table>`},
+
+  {id:'distcog',name:'Distributed Cognition (Hutchins)',tag:'history',short:'Cockpit as cognitive system, speed bugs, PF/PNF, redundancy',
+  content:`
+    <div class="keybox blue"><strong>Core Argument (Hutchins 1995):</strong> The cockpit is a COGNITIVE SYSTEM — not just individual pilots. Memory and cognition are DISTRIBUTED across humans AND physical tools. Unit of analysis = the cockpit as a whole.</div>
+    <table class="study-table"><tr><th>Element</th><th>Cognitive Role</th></tr>
+    <tr><td>Speed card booklet</td><td>Long-term memory of cockpit system — physically durable, non-volatile. Stores V-speeds for aircraft weight.</td></tr>
+    <tr><td>Speed bugs on ASI</td><td>Medium-term memory — set during low workload; used during high-workload approach. Do NOT help pilots remember speeds — they ARE the memory.</td></tr>
+    <tr><td>Verbal callouts</td><td>Ephemeral (temporary) representation — spoken speeds during approach.</td></tr>
+    <tr><td>"Salmon bug"</td><td>Width allows ±5 kt deviation check without math — perceptual task (spatial adjacency) replaces cognitive task (scale reading).</td></tr>
+    <tr><td>PF / PNF split</td><td>PF controls aircraft. PNF monitors airspeed visually and converts to VERBAL callouts for PF. Visual → Auditory channel shift. Reduces PF cognitive load.</td></tr>
+    <tr><td>Redundancy</td><td>Speed stored simultaneously in: booklet + speed card + verbal callout + ASI bugs + pilot memory = 5 redundant stores.</td></tr></table>
+    <div class="keybox gold"><strong>Key insight:</strong> Speed bugs don't HELP pilots remember speeds — they ARE part of the process by which the cockpit SYSTEM remembers speeds. Structure in environment changes the NATURE of the cognitive task.</div>
+    <div class="keybox blue"><strong>Focus on CRM (Frisinger):</strong> EI = being aware of entire crew's mental state, not just your own. Colgan 3407 captain chose "flight" reaction; Sully maintained composure. Leader's emotional behavior is contagious and mirrored by crew.</div>`},
+
+  {id:'ergonomics',name:'Ergonomics, T-Display & Cockpit Design',tag:'history',short:'T-display layout, PFD, HOTAS, control-display compatibility',
+  content:`
+    <table class="study-table"><tr><th>Topic</th><th>Detail</th></tr>
+    <tr><td>Ergonomics definition</td><td>Science of designing the job/workplace to fit the worker. In aviation: designing cockpits so pilots can safely and efficiently interact with aircraft.</td></tr>
+    <tr><td>T-Display / Basic T</td><td>Standard layout: Airspeed Indicator (left) · Attitude Indicator (top center) · Altimeter (right) · Heading Indicator (bottom center). Shape = "T".</td></tr>
+    <tr><td>Why T-display matters</td><td>Standardized across aircraft — pilots trained on one can transition without relearning scan. Reduces error during high workload.</td></tr>
+    <tr><td>PFD (Primary Flight Display)</td><td>Modern glass cockpit consolidates the T into one large electronic display. Attitude, airspeed, altitude, VSI all on one screen.</td></tr>
+    <tr><td>Control/display compatibility</td><td>Controls should move in direction you expect aircraft to move (push forward = nose down). Violations cause errors.</td></tr>
+    <tr><td>HOTAS</td><td>Hands On Throttle And Stick — all critical controls accessible without removing hands; reduces workload.</td></tr>
+    <tr><td>Dark Cockpit philosophy</td><td>Modern standard: all lights/alerts are OFF when systems are normal; illumination indicates a problem. Reduces false alarms.</td></tr></table>`},
+
+  {id:'autopilot',name:'Autopilot (A/P)',tag:'history',short:'CAR 703 requirement, Keystone accident, automation complacency',
+  content:`
+    <table class="study-table"><tr><th>Autopilot</th><th>Detail</th></tr>
+    <tr><td>What is it?</td><td>System that automatically controls aircraft without continuous manual input. Maintains heading, altitude, speed, track, or follows FMS flight plan.</td></tr>
+    <tr><td>CAR 703 requirement</td><td>Single-pilot IFR in air taxi (703) REQUIRES autopilot — violated in Keystone Air crash (Winnipeg 2002).</td></tr>
+    <tr><td>Common modes</td><td>HDG · ALT · NAV · APPR (ILS) · VS · LNAV/VNAV</td></tr>
+    <tr><td>Automation complacency</td><td>Over-reliance on A/P leads to loss of manual flying skills. AF447: when A/P disconnected, crew couldn't hand-fly.</td></tr>
+    <tr><td>Keystone accident (2002)</td><td>Piper PA-31 Winnipeg: single-pilot IFR WITHOUT autopilot (CARs required it). Pilot miscalculated fuel; engines failed on approach. 1 killed. Crashed at major city intersection.</td></tr>
+    <tr><td>A/P and CRM</td><td>A/P frees up cognitive resources. But crew MUST actively monitor it — "managing automation" is a 6th-gen CRM skill.</td></tr></table>`},
+
+  {id:'icao',name:'ICAO — International Civil Aviation Organization',tag:'history',short:'Chicago Convention 1944, Montreal HQ, SARPs, 193 members',
+  content:`
+    <table class="study-table"><tr><th>ICAO</th><th>Detail</th></tr>
+    <tr><td>Founded</td><td>1944 — Convention on International Civil Aviation (Chicago Convention)</td></tr>
+    <tr><td>HQ</td><td><strong>Montreal, Canada</strong></td></tr>
+    <tr><td>Membership</td><td>193 national governments; Canada one of original 52 members</td></tr>
+    <tr><td>Purpose</td><td>Standardize safety, efficiency, consistency of international civil aviation. Develops SARPs.</td></tr>
+    <tr><td>SARPs</td><td>Standards And Recommended Practices — Annexes to Chicago Convention. Standards = minimum requirements; Recommended Practices = desired but not mandatory.</td></tr>
+    <tr><td>Canada SMS</td><td>Canada was FIRST ICAO member to implement SMS (1999). ICAO recommended SMS in 2000.</td></tr>
+    <tr><td>ICAO vs CARs</td><td>ICAO = international standard (baseline). CARs = Canada's national regulations (can be stricter, not looser).</td></tr>
+    <tr><td>Air India 182</td><td>Canada first ICAO member to require passenger/baggage reconciliation on international flights.</td></tr></table>`},
+
+  {id:'histfigures',name:'Key Historical Figures',tag:'history',short:'da Vinci, Katherine Stinson, Freddie McCall, DB Cooper, Patrick Dolan',
+  content:`
+    <table class="study-table"><tr><th>Person</th><th>Key Fact</th><th>Why It Matters</th></tr>
+    <tr><td>Leonardo da Vinci</td><td>15th century</td><td>Drew first aircraft concepts — the "ornithopter" (flapping wing). Conceptual only — never built or flew.</td></tr>
+    <tr><td>Katherine Stinson</td><td>1918 — first airmail in Alberta</td><td>Flew Calgary → Edmonton; Curtiss Special biplane; 7 hours total (2 hrs flying); 2 weeks after first Canadian airmail (Montreal→Toronto). <strong>First airmail in Alberta.</strong></td></tr>
+    <tr><td>Frederick "Freddie" McCall</td><td>WWI Ace; Calgary pioneer</td><td>5th-ranked Canadian WWI ace. DFC awarded. Landed on merry-go-round at 1919 Calgary Exhibition. First president of Calgary Aero Club (1927). Inducted Aviation Hall of Fame 1978.</td></tr>
+    <tr><td>DB Cooper</td><td>Nov 24, 1971 — unsolved hijacking</td><td>Only unsolved air piracy in US history. Hijacked NW Orient 305 (Seattle→Portland); extorted $200K + 4 parachutes; jumped from rear stairs over WA state. Never found. Led to: Cooper vane, pre-boarding screening, sky marshals.</td></tr>
+    <tr><td>Patrick Dolan Critton</td><td>Dec 26, 1971 — Canada's first hijacking</td><td>Air Canada flight, Thunder Bay to Toronto. Led to 1972 Criminal Code amendment making it an offence to bring weapons on aircraft.</td></tr>
+    <tr><td>Chuck Yeager</td><td>1947 — first to break sound barrier</td><td>700 mph; experimental X-1 rocket jet; "Fastest Man Alive"</td></tr>
+    <tr><td>Marc Garneau</td><td>1984 — first Canadian in space</td><td>First CSA astronaut; later Minister of Transport 2015-2021</td></tr></table>`},
+
+  {id:'canadaaviation',name:'History of Canadian Aviation',tag:'history',short:'Silver Dart 1909, TCA, Air Canada, WestJet, Arrow Black Friday',
+  content:`
+    <table class="study-table"><tr><th>Event</th><th>Date</th><th>Detail</th></tr>
+    <tr><td>Silver Dart — first flight in Canada</td><td>Feb 23, 1909</td><td>John A.D. McCurdy; Baddeck, Nova Scotia; designed by AEA (founded by Mabel & Alexander Graham Bell); 800m at 65 km/h; 46 flights; crashed Aug 2, 1909</td></tr>
+    <tr><td>Air Board Act</td><td>June 6, 1919</td><td>Drafted by J.A. Wilson & Col. O.M. Biggar; first aviation regulation in Canada; renamed "Aeronautics Act" in 1937</td></tr>
+    <tr><td>Royal Canadian Air Force</td><td>Feb 18, 1920</td><td>Canadian Air Force formed; 1,340 officers; renamed RCAF</td></tr>
+    <tr><td>ICAO founded</td><td>1944</td><td>Canada original member; HQ Montreal</td></tr>
+    <tr><td>Avro C-102 Jetliner</td><td>1949</td><td>First transport jet in North America; 2 weeks after world's first; 800+ km/h</td></tr>
+    <tr><td>Avro CF-105 Arrow</td><td>1958 first flight / Feb 20, 1959 cancelled</td><td>World-leading jet fighter Mach 2 at 53,000 ft. Cancelled by PM Diefenbaker — "Black Friday"</td></tr>
+    <tr><td>Trans-Canada Airlines (TCA)</td><td>1937</td><td>Wholly-owned subsidiary of CNR; became Air Canada in 1964</td></tr>
+    <tr><td>Canadian Pacific Airlines → Air Canada</td><td>1919→2000</td><td>CPR→CP Airlines→CP Air→Canadian Airlines→merged with Air Canada</td></tr>
+    <tr><td>NavCanada</td><td>1996</td><td>Took over air navigation from TC; ATC, aeronautical info, nav technology</td></tr>
+    <tr><td>CARs became law</td><td>Oct 10, 1996</td><td>Replaced Air Regulations and Air Navigation Orders</td></tr>
+    <tr><td>SMS in Canada</td><td>1999</td><td>FIRST IN THE WORLD to implement SMS</td></tr>
+    <tr><td>CATSA created</td><td>2002</td><td>Air transportation security; passenger/baggage screening</td></tr>
+    <tr><td>WestJet first flight</td><td>Feb 29, 1996</td><td>Competed against Air Canada's "Zip"</td></tr>
+    <tr><td>TSB created</td><td>March 29, 1990</td><td>Investigates air, marine, pipeline, rail. HQ Gatineau, QC.</td></tr></table>`},
+
+  {id:'worldaviation',name:'World Aviation History',tag:'history',short:'Montgolfier 1783, Wright Bros 1903, Lindbergh 1927, sound barrier 1947',
+  content:`
+    <table class="study-table"><tr><th>Date</th><th>Event</th><th>Key Detail</th></tr>
+    <tr><td>5th c. BCE</td><td>Ancient China — kites</td><td>Used in warfare to measure distances</td></tr>
+    <tr><td>15th century</td><td>Leonardo da Vinci — ornithopter</td><td>First aircraft concept drawings</td></tr>
+    <tr><td>1783</td><td>Montgolfier brothers — first balloon</td><td>First unmanned then piloted hot air balloon over Annonay, France</td></tr>
+    <tr><td>1809-1810</td><td>George Cayley — Father of Aeronautics</td><td>First concept of fixed-wing flying machine</td></tr>
+    <tr><td>Dec 17, 1903</td><td>Wright Brothers — first powered flight</td><td>4 flights; longest piloted by Wilbur; Kitty Hawk NC</td></tr>
+    <tr><td>Jan 1, 1914</td><td>Tony Jannus — first commercial pax flight</td><td>St. Petersburg-Tampa Airboat Line</td></tr>
+    <tr><td>1919</td><td>Alcock & Brown — first transatlantic</td><td>NL to County Galway, Ireland; 16 hrs; Vickers Vimy; crashed in peat bog</td></tr>
+    <tr><td>1921</td><td>Bessie Coleman</td><td>First African American woman to earn pilot's licence</td></tr>
+    <tr><td>1927</td><td>Charles Lindbergh — first solo Atlantic</td><td>"Lucky Lindy"; Spirit of St. Louis; NY→Paris; Medal of Honor</td></tr>
+    <tr><td>1932</td><td>Amelia Earhart — first woman solo Atlantic</td><td>"Lady Lindy"; Harbour Grace NL to Culmore, N. Ireland; disappeared over Pacific 1937</td></tr>
+    <tr><td>1944</td><td>Chicago Convention + ICAO founded</td><td>Canada original member; HQ Montreal</td></tr>
+    <tr><td>1947</td><td>Chuck Yeager — first to break sound barrier</td><td>700 mph; X-1 rocket jet; "Fastest Man Alive"</td></tr>
+    <tr><td>1949</td><td>de Havilland Comet</td><td>First commercial jetliner (British)</td></tr>
+    <tr><td>1954-57</td><td>Boeing 707 debut</td><td>Pan American Airways; comfort, speed, safety</td></tr></table>`},
+
+  {id:'keystoneaccident',name:'Keystone Air Accident (2002)',tag:'both',short:'Winnipeg fuel exhaustion, CARs violations, findings',
+  content:`
+    <div class="keybox red"><strong>TSB Report A02C0124 — June 11, 2002, Winnipeg, Manitoba.</strong> Piper PA-31-350 Navajo Chieftain. 1 passenger killed of injuries, 6 others seriously injured.</div>
+    <h4>What Happened</h4>
+    <ul class="bullet">
+      <li>Pilot flew IFR from Gunisao Lake to Winnipeg with 1 pilot + 6 passengers</li>
+      <li>Fuel was ¾ full at Swan River — pilot made mental estimate (no written calculation)</li>
+      <li>Did NOT complete weight & balance or fuel calculations on the ops flight plan</li>
+      <li>Pilot flew ILS approach well above glidepath and faster than normal (trying to save fuel)</li>
+      <li>Broke out at ~200 ft AGL with only 3,200 ft of runway remaining — executed missed approach</li>
+      <li>Both engines failed from fuel exhaustion; aircraft crashed at major city intersection</li>
+    </ul>
+    <h4>CARs Violations</h4>
+    <table class="study-table"><tr><th>Finding</th><th>Rule Violated</th></tr>
+    <tr><td>Pilot flew single-pilot IFR without autopilot</td><td>CAR 703 — autopilot required for single-pilot IMC</td></tr>
+    <tr><td>Insufficient fuel for flight + alternate + 45 min reserve</td><td>CAR 602.88 — IFR fuel requirements</td></tr>
+    <tr><td>No weight & balance completed</td><td>Company ops manual requirement</td></tr>
+    <tr><td>No adequate supervisor oversight</td><td>Company supervisors knew A/P was removed — did nothing</td></tr></table>
+    <div class="keybox gold"><strong>Key lesson:</strong> Mental fuel estimates are not sufficient. Written calculations required. This accident illustrates the Swiss Cheese Model perfectly — organizational failures (no real flight release, A/P removed, no supervision) + active failure (pilot's calculation) = accident.</div>`}
+];
+
+// ==================== MASTER NUMBERS ====================
+const masterNumbers = [
+  {q:"Controlled airspace — flight visibility",a:"3 miles"},
+  {q:"Controlled airspace — vertical cloud clearance",a:"500 ft"},
+  {q:"Controlled airspace — horizontal cloud clearance",a:"1 mile"},
+  {q:"Uncontrolled ≥1,000 ft AGL — horizontal cloud clearance",a:"2,000 ft (NOT 1 mile!)"},
+  {q:"Uncontrolled ≥1,000 ft AGL — day visibility",a:"1 mile"},
+  {q:"Uncontrolled ≥1,000 ft AGL — night visibility",a:"3 miles"},
+  {q:"Uncontrolled <1,000 ft AGL — aeroplane day visibility",a:"2 miles"},
+  {q:"Uncontrolled <1,000 ft AGL — night visibility (any aircraft)",a:"3 miles"},
+  {q:"SVFR — aeroplane minimum visibility",a:"1 mile"},
+  {q:"SVFR — helicopter minimum visibility",a:"½ mile"},
+  {q:"VFR OTT — flight visibility",a:"5 miles"},
+  {q:"VFR OTT — minimum height above cloud",a:"1,000 ft"},
+  {q:"VFR Day Aeroplane — fuel reserve",a:"30 min"},
+  {q:"VFR Night Aeroplane — fuel reserve",a:"45 min"},
+  {q:"VFR Helicopter — fuel reserve (day or night)",a:"20 min"},
+  {q:"IFR Propeller — fuel reserve",a:"45 min"},
+  {q:"IFR Jet / Helicopter — fuel reserve",a:"30 min"},
+  {q:"Altimeter-setting region — upper limit",a:"18,000 ft ASL"},
+  {q:"Standard pressure setting",a:"29.92 in Hg / 1,013.2 mb"},
+  {q:"VFR cruising altitudes apply above",a:"3,000 ft AGL"},
+  {q:"Northbound/Eastbound VFR altitudes",a:"Odd thousands + 500 ft"},
+  {q:"Southbound/Westbound VFR altitudes",a:"Even thousands + 500 ft"},
+  {q:"VFR flight plan required beyond",a:"25 NM from departure"},
+  {q:"Recency — general flying (at all)",a:"5 years"},
+  {q:"Recency — recurrent training",a:"24 months"},
+  {q:"Recency — carry passengers (landings)",a:"6 months / 5 T/O + 5 landings"},
+  {q:"Night pax currency",a:"5 NIGHT T/O + 5 NIGHT landings in last 6 months"},
+  {q:"Air Taxi (703) — currency in type",a:"90 days / 3 T/O + 3 landings"},
+  {q:"PPC validity",a:"12 months"},
+  {q:"Oxygen: above 13,000 ft crew requirement",a:"Must use at ALL times"},
+  {q:"Oxygen: 10,001–13,000 ft crew rule",a:"Required if at altitude >30 min"},
+  {q:"Class C tower closes = becomes",a:"Class E"},
+  {q:"Class D tower closes = becomes",a:"Class E"},
+  {q:"NORDO circuit entry requirement",a:"2 sides of rectangle before final"},
+  {q:"MEL Category A — repair time",a:"Before next flight (zero tolerance)"},
+  {q:"MEL Category B — repair time",a:"3 calendar days"},
+  {q:"MEL Category C — repair time",a:"10 calendar days"},
+  {q:"MEL Category D — repair time",a:"120 calendar days"},
+  {q:"Transponder code: Hijack",a:"7500"},
+  {q:"Transponder code: Comms failure (NORDO)",a:"7600"},
+  {q:"Transponder code: Emergency",a:"7700"},
+  {q:"Operation Yellow Ribbon — flights diverted to Canada (9/11)",a:"224 flights / 6,656 passengers"},
+  {q:"Silver Dart first flight in Canada",a:"Feb 23, 1909 — Baddeck, Nova Scotia"},
+  {q:"Avro Arrow cancelled — 'Black Friday'",a:"Feb 20, 1959"},
+  {q:"CARs became law",a:"October 10, 1996"},
+  {q:"SMS first implemented",a:"Canada, 1999 — first in the world"},
+  {q:"TSB created",a:"March 29, 1990"},
+  {q:"CATSA created",a:"2002"},
+  {q:"WestJet first flight",a:"February 29, 1996"},
+  {q:"CARAC established",a:"July 1, 1993"},
+  {q:"Max flight time — 28 days",a:"150 hours"},
+  {q:"Max flight time — 365 days",a:"1,200 hours"},
+  {q:"Life preserver required — land aeroplane/helicopter beyond shore",a:"50 nautical miles from shore"},
+  {q:"Life preserver required — balloon beyond shore",a:"2 nautical miles from shore"},
+  {q:"Life raft required — single-engine aeroplane (or multi unable to maintain flight)",a:"100 NM or 30 min flying time from suitable landing site (whichever is less)"},
+  {q:"Life raft required — multi-engine aeroplane able to maintain flight",a:"200 NM or 60 min flying time from suitable landing site (whichever is less)"},
+  {q:"Life raft exception — transport category aeroplane",a:"May operate up to 400 NM or 120 min from suitable site WITHOUT life rafts"},
+  {q:"Life raft required — single-engine helicopter (or multi unable to maintain flight)",a:"25 NM or 15 min flying time from suitable landing site (whichever is less)"},
+  {q:"Life raft required — multi-engine helicopter able to maintain flight",a:"50 NM or 30 min flying time from suitable landing site (whichever is less)"},
+  {q:"Helicopter cold water rule — water temperature threshold",a:"Less than 10°C — transportation suit systems required for all persons"},
+  {q:"Oxygen — air transport service above 13,000 ft (unpressurized) minimum supply",a:"Not less than 1 hour for ALL persons on board"},
+  {q:"Oxygen — pressurized aircraft, flight crew, aircraft certified above FL250 (air transport)",a:"Not less than 2 hours for flight crew"},
+  {q:"Oxygen — pressurized aircraft, passengers in air transport service",a:"Not less than 10 minutes after pressurization failure emergency descent"},
+  {q:"ADIZ — VFR deviation reporting threshold (time)",a:"± 5 minutes of estimated time at reporting point, ADIZ entry point, or destination"},
+  {q:"ADIZ — VFR deviation reporting threshold (distance)",a:"20 NM from estimated ADIZ entry point or centre line of route"},
+  {q:"ESCAT — position report interval outside controlled airspace",a:"At least every 30 minutes"},
+  {q:"Medical category — CPL (to exercise commercial privileges)",a:"Category 1 (NOT Cat 3 — that is for PPL)"},
+  {q:"Medical category — PPL",a:"Category 3"},
+  {q:"Medical category — Student Pilot Permit / Recreational",a:"Category 4"},
+];
+
+// ==================== ACCIDENTS ====================
+const accidents = [
+  {year:"1956",title:"Grand Canyon — United 718 & TWA 2",cause:"Mid-air collision; 128 killed; no ATC, pilots responsible for visual avoidance",result:"Improved ATC + radar → contributed to TCAS collision-avoidance systems"},
+  {year:"1960",title:"Trans Australia 538",cause:"Crashed at sea on night approach; all 29 killed; unknown cause — no data to investigate",result:"ALL large passenger aircraft required to carry Flight Data Recorders (FDR) AND Cockpit Voice Recorders (CVR)"},
+  {year:"1977",title:"Tenerife — KLM 4805 & Pan Am 1736",cause:"WORST IN HISTORY — 583 killed. Thick fog. KLM captain began takeoff without clearance. Misunderstood radio comms.",result:"Standardized radio phraseology ('roger' replaced by specific readbacks) + BIRTH OF CRM TRAINING"},
+  {year:"1982",title:"British Airways 9",cause:"All 4 engines quit due to volcanic ash; diverted to Jakarta; engines restarted; landed safely",result:"Awareness of volcanic ash impact on jet engines"},
+  {year:"1983",title:"Air Canada 797",cause:"Smoke on board; flash fire on door opening; 23 of 46 killed",result:"Smoke detectors in lavatories · fire extinguishers · flame-resistant materials · floor lighting to exits"},
+  {year:"1985",title:"Delta Air Lines 191",cause:"Flew through thunderstorm; microburst on approach; hit ground 1 mile short of runway",result:"Improved weather radar + wind shear alert systems"},
+  {year:"1985",title:"Air India 182",cause:"Bomb concealed in checked baggage; 329 killed; bomb conceived, planned, executed in Canada",result:"Passenger/baggage reconciliation · airport background checks · removal of baggage coin lockers · first ICAO member with these requirements"},
+  {year:"1988",title:"Aloha Airlines 243",cause:"Top of fuselage ripped off; 1 flight attendant killed; pressurization cycles caused corrosion and metal fatigue",result:"Increased maintenance requirements for aging aircraft"},
+  {year:"1989",title:"United Airlines 232",cause:"Engine failure severed hydraulic lines; 'The Impossible Landing' in Sioux City; crash-landed then fire",result:"Engine safety improvements · hydraulic system modifications"},
+  {year:"1996",title:"TWA 800",cause:"Exploded into Atlantic Ocean; flammable fuel vapors in center fuel tank",result:"New requirements for fuel tank and wiring"},
+  {year:"1998",title:"Swiss Air 111",cause:"Faulty wiring fire; circuit breakers failed; crashed into ocean after troubleshooting",result:"Flame-resistant insulation on wiring"},
+  {year:"2000",title:"Singapore Airlines 006",cause:"Captain rushed departure to beat typhoon; skipped NOTAMs; attempted takeoff on closed, dark, under-construction runway; 83 killed",result:"Classic tunnel vision case study — used in EQ/CRM training"},
+  {year:"2002",title:"Keystone Air Services (Winnipeg)",cause:"Pilot miscalculated fuel; flew IFR without required autopilot; engines failed on missed approach; crashed at city intersection",result:"Example of Swiss Cheese: violated CAR 703 A/P requirement + no written fuel calculation + inadequate company oversight"},
+  {year:"2009",title:"Air France 447",cause:"Pitot tube blockage → unreliable airspeed → autopilot disconnected → crew couldn't hand-fly → stalled into Atlantic; 228 killed",result:"Manual flying training to reduce automation dependence"},
+  {year:"2018/19",title:"Boeing 737 MAX 8 — Lion Air 610 & Ethiopian 302",cause:"Both crashed after takeoff; flawed MCAS system; inadequate pilot training; 346 total killed",result:"Updated MCAS systems + increased pilot training requirements; all MAX 8 grounded worldwide"},
+];
+
+// ==================== FLASHCARDS ====================
+const allCards = [
+  // AIR LAW
+  {cat:'airlaw',q:"What is the horizontal cloud clearance in controlled airspace?",a:"1 mile"},
+  {cat:'airlaw',q:"What is the horizontal cloud clearance in uncontrolled airspace at or above 1,000 ft AGL?",a:"2,000 ft (NOT 1 mile — this is the #1 trap question!)"},
+  {cat:'airlaw',q:"What cloud clearance applies below 1,000 ft AGL in uncontrolled airspace?",a:"Clear of cloud — no specific distance"},
+  {cat:'airlaw',q:"What is the minimum visibility for VFR in controlled airspace?",a:"3 miles (all classes of controlled airspace)"},
+  {cat:'airlaw',q:"What is the minimum visibility for SVFR in a helicopter?",a:"½ mile — clear of cloud, ATC authorization required, control zone only"},
+  {cat:'airlaw',q:"What is SVFR and when can you use it?",a:"Special VFR — only in a control zone, only with ATC authorization. Plane = 1 mile vis; Helicopter = ½ mile. Must be clear of cloud."},
+  {cat:'airlaw',q:"What are the VFR OTT requirements?",a:"Day only · 5 miles visibility at cruise alt · 1,000 ft above cloud · destination forecast VFR · VFR OTT rating needed"},
+  {cat:'airlaw',q:"What happens to Class C and D airspace when the tower closes?",a:"Both become Class E airspace"},
+  {cat:'airlaw',q:"What is the difference between Class C and Class D entry for VFR?",a:"Class C = need ATC clearance before entering. Class D = just establish two-way radio contact (no clearance needed)."},
+  {cat:'airlaw',q:"What are the MEL category repair times?",a:"Cat A = before next flight · Cat B = 3 days · Cat C = 10 days · Cat D = 120 days"},
+  {cat:'airlaw',q:"What must be done to an inoperative item on an MEL?",a:"It must be placarded 'INOPERATIVE'"},
+  {cat:'airlaw',q:"What is the 25 NM flight plan rule?",a:"VFR within 25 NM of departure: no plan needed. Beyond 25 NM: file a flight plan OR flight itinerary."},
+  {cat:'airlaw',q:"What is the difference between a flight plan and a flight itinerary?",a:"Flight PLAN = filed with ATC (ATC tracks you). Flight ITINERARY = filed with a responsible person on the ground. Both require an arrival report."},
+  {cat:'airlaw',q:"What is a 'responsible person' in aviation?",a:"A designated person on the ground who has your flight itinerary and will contact SAR if you don't arrive within 1 hour of your ETA."},
+  {cat:'airlaw',q:"What are the VFR fuel reserves for an aeroplane?",a:"Day VFR = 30 min · Night VFR = 45 min"},
+  {cat:'airlaw',q:"What is the VFR fuel reserve for a helicopter?",a:"20 minutes — same for day and night"},
+  {cat:'airlaw',q:"What are the IFR fuel reserves?",a:"Propeller = 45 min. Jet/Helicopter = 30 min. (Dest + missed approach + alternate + reserve)"},
+  {cat:'airlaw',q:"What altimeter setting is used above 18,000 ft ASL?",a:"29.92 in Hg / 1,013.2 mb (QNE / Standard Pressure). Fly Flight Levels."},
+  {cat:'airlaw',q:"When should you set 29.92 when climbing?",a:"BEFORE reaching FL180 — set it during the climb through the transition altitude, not at or after FL180"},
+  {cat:'airlaw',q:"What cruising altitude does a VFR pilot flying track 090° use above 3,000 AGL?",a:"Odd thousands + 500 ft (e.g., 3,500 / 5,500 / 7,500). Track 090° is eastbound = NOSE = North/East = Odd."},
+  {cat:'airlaw',q:"What are the night passenger currency requirements?",a:"5 NIGHT T/O + 5 NIGHT landings in the previous 6 months. Day landings do NOT count for night passenger currency."},
+  {cat:'airlaw',q:"When are life preservers required?",a:"Any flight over water beyond gliding distance from shore (if engine fails)"},
+  {cat:'airlaw',q:"What is the oxygen rule above 13,000 ft MSL?",a:"ALL flight crew must use supplemental oxygen at ALL times above 13,000 ft MSL"},
+  {cat:'airlaw',q:"What are the oxygen rules for 10,001–13,000 ft MSL?",a:"Flight crew must use oxygen if flying at that altitude for more than 30 minutes"},
+  {cat:'airlaw',q:"What are the medical categories for each pilot licence?",a:"ATPL = Cat 1 · CPL = Cat 1 (to exercise commercial privileges) · PPL = Cat 3 · Student Pilot Permit = Cat 4. CPL Cat 1 expired? Can use Cat 3 for PPL privileges ONLY — not commercial."},
+  {cat:'airlaw',q:"What is the 'bottle to throttle' rule?",a:"No alcohol within 8 hours of acting as crew. Even after 8 hrs, BAC must be less than 0.04%."},
+  {cat:'airlaw',q:"What are the transponder emergency codes?",a:"7500 = Hijack · 7600 = Comms failure (NORDO) · 7700 = Emergency"},
+  {cat:'airlaw',q:"What is the NORDO circuit entry requirement in an MF area?",a:"Must fly at least 2 sides of the rectangle (rectangular circuit) before final approach"},
+  {cat:'airlaw',q:"What is a PPC and when is it valid?",a:"Pilot Proficiency Check — formal assessed flight check. Valid for 12 months."},
+  {cat:'airlaw',q:"What is the difference between AIP Canada and TC AIM?",a:"AIP Canada = regulatory (MUST comply). TC AIM = reference only (helpful but not binding). AIM issued twice/year (March, October)."},
+  {cat:'airlaw',q:"What are the 9 Dangerous Goods classes?",a:"1=Explosives · 2=Gases · 3=Flammable liquids · 4=Flammable solids · 5=Oxidizers · 6=Toxic/infectious · 7=Radioactive · 8=Corrosives · 9=Misc"},
+  {cat:'airlaw',q:"What does MMEL stand for and how does it relate to MEL?",a:"Master Minimum Equipment List — issued by manufacturer. The airline's MEL must be equal to or MORE restrictive than the MMEL."},
+  {cat:'airlaw',q:"What is the max flight time per calendar day for an air taxi pilot?",a:"9 hours per calendar day"},
+  {cat:'airlaw',q:"What is the max flight time in any 28 consecutive days?",a:"150 hours"},
+  // HISTORY
+  {cat:'history',q:"Who invented the Link Trainer and when?",a:"Edwin Link in 1929 — world's first flight simulator, used extensively in WWII BCATP"},
+  {cat:'history',q:"What was the Gosport System and why is it still significant?",a:"1918 training method that taught dynamics of flight and how to recover from difficulties. First dual-control planes with rubber tube comms. Still the basis of flight training today."},
+  {cat:'history',q:"What was the first flight in Canada and when did it occur?",a:"Feb 23, 1909 — John A.D. McCurdy flew the Silver Dart in Baddeck, Nova Scotia. 800m at 65 km/h."},
+  {cat:'history',q:"What was 'Black Friday' in Canadian aviation?",a:"Feb 20, 1959 — PM Diefenbaker cancelled the Avro CF-105 Arrow, a world-leading jet fighter capable of Mach 2 at 53,000 ft."},
+  {cat:'history',q:"What is Operation Yellow Ribbon?",a:"9/11 response: 224 flights diverted to Canada; 38 aircraft; 6,656 passengers. Gander, NL hosted aircraft for 3-4 days."},
+  {cat:'history',q:"What did Katherine Stinson accomplish in 1918?",a:"First airmail delivery in Alberta — flew Calgary to Edmonton by Curtiss Special biplane; 7 hours total (2 hrs flying); 2 weeks after first Canadian airmail (Montreal to Toronto)"},
+  {cat:'history',q:"Who was DB Cooper and what was the significance of his hijacking?",a:"Nov 24, 1971 — only unsolved air piracy in US history. Hijacked NW Orient 305; extorted $200K + 4 parachutes; jumped from rear stairs; never found. Led to: Cooper vane, pre-boarding screening, sky marshals."},
+  {cat:'history',q:"What was Canada's first hijacking and who was involved?",a:"Dec 26, 1971 — Patrick Dolan Critton hijacked an Air Canada flight from Thunder Bay to Toronto. Led to 1972 Criminal Code amendment."},
+  {cat:'history',q:"What was the birth of CRM and what organization hosted the 1979 workshop?",a:"NASA hosted the 1979 workshop that identified crew performance failures. Originally called 'Cockpit Resource Management' — later became 'Crew Resource Management'."},
+  {cat:'history',q:"What are the 6 generations of CRM in order?",a:"1=Charm School · 2=Team (Crew not Cockpit) · 3=Everyone (FAs, dispatchers) · 4=AQP+SOPs · 5=AVOID/TRAP/MANAGE · 6=Proactive TEM+LOSA"},
+  {cat:'history',q:"What is LOFT and what is LOSA?",a:"LOFT = Line Oriented Flight Training (simulator training with realistic scenarios). LOSA = Line Operations Safety Audit (observational study of normal line flights to identify threats/errors)."},
+  {cat:'history',q:"What are the 3 types of threats in TEM?",a:"Expected · Unexpected · Latent"},
+  {cat:'history',q:"What is the Swiss Cheese Model and who developed it?",a:"James Reason (1990) — accidents occur when holes in multiple defensive layers align. Latent failures (organizational) + Active failures (human) combine."},
+  {cat:'history',q:"What are the 4 Pillars of SMS?",a:"1. Safety Policy · 2. Safety Risk Management · 3. Safety Assurance · 4. Safety Promotion"},
+  {cat:'history',q:"When did Canada implement SMS and why is it significant?",a:"1999 — Canada was the FIRST country in the world to implement SMS. First SMS regulations came in 2005."},
+  {cat:'history',q:"What is Just Culture in SMS?",a:"An atmosphere of trust that encourages reporting. Clear line between acceptable and unacceptable behaviour. #1 requirement: non-punitive reporting. Discipline exceptions: willful negligence, criminal intent, illicit substances."},
+  {cat:'history',q:"Who developed Emotional Intelligence theory in aviation?",a:"Daniel Goleman (PhD) published EI theory. Paul Ekman studied facial expressions and micro-expressions. Paul MacLean developed Triune Brain Theory."},
+  {cat:'history',q:"What are the 5 EQ competencies?",a:"1. Emotional Self-Awareness · 2. Emotional Self-Regulation · 3. Emotional Self-Motivation · 4. Social Awareness · 5. Social Skills. 1-3 = Intrapersonal; 4-5 = Interpersonal."},
+  {cat:'history',q:"What is distributed cognition and why is the cockpit a cognitive system?",a:"Hutchins (1995): memory and cognition are distributed across humans AND physical tools. The speed card, ASI bugs, verbal callouts, and pilot memory all work together — the COCKPIT SYSTEM remembers, not just the pilots."},
+  {cat:'history',q:"What does a speed bug actually do cognitively?",a:"Speed bugs don't help pilots REMEMBER speeds — they ARE part of how the cockpit system remembers. They transform a 'memory and scale reading' task into a simple 'spatial adjacency judgment'."},
+  {cat:'history',q:"What is the T-Display and why does it matter?",a:"Standard cockpit layout: Airspeed Indicator (left) · Attitude Indicator (top center) · Altimeter (right) · Heading Indicator (bottom center). Standardized across aircraft to reduce error during high-workload phases."},
+  {cat:'history',q:"What is Fly-By-Wire and what are its advantages/disadvantages?",a:"FBW: pilot inputs → electronic signals → computers → control surfaces. Advantages: lighter, envelope protection, sidestick. Disadvantages: single points of failure, loss of tactile feedback, automation dependence."},
+  {cat:'history',q:"What caused the Tenerife disaster (1977) and what changed?",a:"583 killed — worst in history. KLM began takeoff without clearance; thick fog; misunderstood radio comms. Result: standardized phraseology + birth of CRM training."},
+  {cat:'history',q:"What caused the Trans Australia 538 crash and what resulted?",a:"1960: crashed at sea on night approach; all 29 killed; no known cause because no data existed. Result: FDR + CVR required on all large passenger aircraft."},
+  {cat:'history',q:"What happened in Colgan Air 3407 vs. USAirways 1549?",a:"Colgan 3407: Captain chose 'flight' reaction; ignored icing; talked about himself 20/40 min of flight; airspeed not monitored; low EI. USAirways 1549 (Sully): maintained composure; focused on task; landed on Hudson River safely."},
+  {cat:'history',q:"What was the MBTI developed from and who are its key figures?",a:"Carl Jung's personality theory (1875-1961). Katharine C. Briggs (1875-1968) spent 20 years applying Jung's theory. Isabel Briggs Myers (1897-1980) developed the instrument starting 1943. No right/wrong types."},
+  {cat:'history',q:"What was the Air India 182 bombing and what changed?",a:"June 23, 1985: 329 killed off coast of Ireland. Bomb planned and executed in Canada. Led to: passenger/baggage reconciliation, airport background checks, removal of baggage coin lockers, banning cameras near security."},
+  {cat:'history',q:"What is ICAO and when/where was it founded?",a:"International Civil Aviation Organization — 1944 Chicago Convention. HQ: Montreal. 193 member states. Canada = original member. Develops SARPs (Standards and Recommended Practices)."},
+  {cat:'history',q:"What is the SHELL model?",a:"Developed by Elwyn Edwards (1972): Software · Hardware · Environment · Liveware. Framework for analyzing human-machine interaction in aviation."},
+];
+
+// ==================== QUIZ QUESTIONS ====================
+const quizQuestions = [
+  {cat:'airlaw',q:"A VFR aeroplane flies in uncontrolled airspace at 1,500 ft AGL during the day. What is the minimum horizontal cloud clearance required?",opts:["1 mile","500 ft","2,000 ft","Clear of cloud"],a:2,exp:"In uncontrolled airspace ≥1,000 ft AGL, horizontal cloud clearance = 2,000 ft — NOT 1 mile. Controlled = 1 mile. This is the #1 exam trap."},
+  {cat:'airlaw',q:"Class C airspace tower closes for the night. The airspace now becomes:",opts:["Class D","Class E","Class G","Class F Advisory"],a:1,exp:"Both Class C and Class D become Class E when the tower closes."},
+  {cat:'airlaw',q:"What is the minimum SVFR visibility for a helicopter in a control zone?",opts:["¼ mile","½ mile","1 mile","2 miles"],a:1,exp:"SVFR helicopter = ½ mile. SVFR aeroplane = 1 mile. Both must be clear of cloud, in a control zone, with ATC authorization."},
+  {cat:'airlaw',q:"An IFR turboprop has filed an alternate. What fuel reserve is required after reaching the alternate?",opts:["20 minutes","30 minutes","45 minutes","1 hour"],a:2,exp:"Propeller-driven IFR aircraft require 45 min reserve. Jets/helicopters IFR = 30 min."},
+  {cat:'airlaw',q:"A night flight is planned with passengers. Your logbook shows 5 T/Os and 5 landings in the past 5 months — all during daylight. Are you current?",opts:["Yes — 5 T/O + 5 landings satisfies the requirement","No — they must be NIGHT T/Os and landings","Yes — if completed in the same aircraft type","No — you need 10 total night landings"],a:1,exp:"Night passenger currency requires NIGHT T/Os and landings. Day landings do NOT count for night pax currency."},
+  {cat:'airlaw',q:"A VFR pilot on track 270° (westbound) above 3,000 ft AGL should fly:",opts:["Odd thousands + 500 ft","Even thousands + 500 ft","Odd thousands only","Even thousands only"],a:1,exp:"NOSE = North Odd, South Even. Westbound = South/West hemisphere = Even. VFR adds 500 ft to IFR altitude."},
+  {cat:'airlaw',q:"The difference between Class C and Class D entry requirements for VFR is:",opts:["C requires radio contact; D requires clearance","C requires clearance before entry; D requires only two-way contact","Both require clearance","Both require only radio contact"],a:1,exp:"Class C = need ATC clearance (permission to enter). Class D = just establish two-way contact (no permission needed)."},
+  {cat:'airlaw',q:"A CPL holder's Category 1 medical expires. They hold a valid Category 3 medical. What can they still do?",opts:["Act as PIC on an air taxi flight","Exercise PPL privileges as PIC","Act as co-pilot on a commercial night charter","Conduct commercial flight instruction"],a:1,exp:"A CPL holder may exercise PPL privileges using a Cat 3 medical when the CPL Cat 1 medical expires. Cannot do commercial operations."},
+  {cat:'airlaw',q:"Which situation ALWAYS requires a flight plan, regardless of distance?",opts:["VFR flight within 20 NM","IFR flight in uncontrolled airspace","VFR flight crossing an international border","VFR flight to aerodrome 30 NM away with responsible person notified"],a:2,exp:"Crossing an international border ALWAYS requires a flight plan — no exceptions, no distance minimum."},
+  {cat:'airlaw',q:"A pilot is climbing to FL200. When should the altimeter be set to 29.92?",opts:["Exactly at FL180","After levelling off at FL200","Before reaching FL180, during the climb","When ATC instructs"],a:2,exp:"Set 29.92 BEFORE reaching FL180, during the climb through the transition altitude. On descent, reset to QNH before passing back through."},
+  {cat:'airlaw',q:"What VFR fuel reserve does a helicopter require for a night flight?",opts:["20 minutes","30 minutes","45 minutes","Same as fixed-wing at night (45 min)"],a:0,exp:"Helicopters = 20 min VFR fuel reserve day OR night. Unlike aeroplanes, no increase for night. Classic trap!"},
+  {cat:'airlaw',q:"MEL Category C items must be repaired within:",opts:["3 calendar days","10 calendar days","30 calendar days","120 calendar days"],a:1,exp:"Cat A = before departure · Cat B = 3 days · Cat C = 10 days · Cat D = 120 days"},
+  {cat:'airlaw',q:"An IFR pilot in uncontrolled airspace cannot reach ATC. What is acceptable instead of a flight plan?",opts:["VFR flight plan","No substitute exists","A flight itinerary filed with a responsible person","A PIREP to nearest FSS"],a:2,exp:"A flight itinerary filed with a responsible person is acceptable for IFR in uncontrolled airspace when ATC comms are unavailable."},
+  {cat:'airlaw',q:"At what altitude does crew oxygen become mandatory at all times?",opts:["10,000 ft MSL","10,001 ft MSL","13,000 ft MSL","15,000 ft MSL"],a:2,exp:"Above 13,000 ft MSL, ALL flight crew must use supplemental oxygen at ALL times. 10,001–13,000 ft = required if at altitude >30 min."},
+  {cat:'airlaw',q:"A 703 Air Taxi PIC must have completed in the specific aircraft type within the past 90 days:",opts:["5 T/O + 5 landings","3 T/O + 3 landings","1 T/O + 1 landing","No specific type requirement"],a:1,exp:"703 Air Taxi adds a 90-day currency rule: 3 T/Os and 3 landings in the same TYPE. This is in addition to the standard 6-month pax currency."},
+  // HISTORY
+  {cat:'history',q:"The Tenerife disaster (1977) resulted in which two major safety outcomes?",opts:["FDR+CVR requirements and TCAS","Standardized radio phraseology and birth of CRM training","Smoke detectors and floor exit lighting","Improved weather radar and wind shear alerts"],a:1,exp:"Tenerife: 583 killed (worst ever). KLM began takeoff without clearance; thick fog; misunderstood comms. Results: standardized phraseology + CRM training born."},
+  {cat:'history',q:"The Trans Australia 538 crash (1960) directly led to:",opts:["CRM training","TCAS systems","FDR and CVR requirements on all large passenger aircraft","Standardized radio phraseology"],a:2,exp:"Trans Australia 538 crashed with no known cause because there was no data. Direct result: all large passenger aircraft required to carry FDR + CVR."},
+  {cat:'history',q:"Which accident directly caused smoke detectors in lavatories and floor-level exit lighting?",opts:["Air France 447","United Airlines 232","Air Canada 797 (1983)","Swiss Air 111"],a:2,exp:"Air Canada 797: smoke-filled cabin, flash fire on door opening; 23 of 46 died. Required: lavatory smoke detectors, fire extinguishers, flame-resistant materials, floor lighting."},
+  {cat:'history',q:"CRM was originally called what, and was changed with which generation?",opts:["Cockpit Resource Management; changed in 1st gen","Cockpit Resource Management; changed in 2nd gen to 'Crew'","Crew Response Management; changed in 3rd gen","Critical Risk Management; changed in 4th gen"],a:1,exp:"Originally 'Cockpit Resource Management.' Changed to 'Crew Resource Management' in the 2nd generation (from 1986) to include all crewmembers, not just cockpit."},
+  {cat:'history',q:"Canada was first in the world to implement which aviation safety concept in 1999?",opts:["CRM training","Safety Management Systems (SMS)","LOSA auditing","Threat and Error Management"],a:1,exp:"Canada implemented SMS in 1999 — first country in the world to do so. First SMS regulations followed in 2005."},
+  {cat:'history',q:"The 6th generation of CRM is characterized by:",opts:["Team-oriented training","AVOID/TRAP/MANAGE error countermeasures","Proactive TEM + LOSA (Line Operations Safety Audits)","Integration with AQP and SOPs"],a:2,exp:"6th gen CRM (2001+): proactive Threat and Error Management + LOSA (observing normal line operations to identify systemic threats). Earlier generations were more reactive."},
+  {cat:'history',q:"Which accident is used as the key case study for tunnel vision (EQ competency 3)?",opts:["Colgan Air 3407","Singapore Airlines 006","Air France 447","United Airlines 232"],a:1,exp:"Singapore Airlines 006 (Oct 31, 2000): Captain rushed departure to beat typhoon, skipped NOTAMs, attempted takeoff on closed construction runway. 83 killed. Classic tunnel vision — focused on on-time departure to the exclusion of safety."},
+  {cat:'history',q:"Edwin Hutchins argues the cockpit is a cognitive system because:",opts:["Pilots have excellent memory","Cognition and memory are distributed across humans AND physical tools","Automation handles all cognitive tasks","Each pilot handles separate cognitive functions"],a:1,exp:"Hutchins (1995): Memory and cognition are distributed. Speed cards, ASI bugs, verbal callouts, and pilot memory all work together. The COCKPIT SYSTEM remembers, not just individual pilots."},
+  {cat:'history',q:"The Keystone Air Services accident (2002, Winnipeg) violated which CARs requirement?",opts:["VFR fuel requirements","Single-pilot IFR requires autopilot (CAR 703)","Passenger/baggage reconciliation","Night currency requirements"],a:1,exp:"CAR 703 requires an autopilot for single-pilot IFR operations. The Keystone pilot flew IMC without an autopilot (it had been removed). Also: insufficient fuel and no written fuel calculation."},
+  {cat:'history',q:"What was the first flight IN Canada, by whom, and where?",opts:["John McCurdy; Silver Dart; Baddeck, Nova Scotia; Feb 23, 1909","Alcock & Brown; Vickers Vimy; St. John's, NL; 1919","Lindbergh; Spirit of St. Louis; Montreal; 1927","Hugh Robinson; Edmonton; 1911"],a:0,exp:"Feb 23, 1909 — John A.D. McCurdy flew the Silver Dart in Baddeck, Nova Scotia. 800m at 65 km/h. Designed by AEA (founded by Alexander Graham Bell)."},
+  {cat:'history',q:"Operation Yellow Ribbon refers to:",opts:["Canadian response to Air India bombing","Diversion of 224 flights to Canada on 9/11 with 6,656 passengers","The creation of CATSA in 2002","Canada's first airmail flight 1918"],a:1,exp:"9/11: American airspace shut down. 224 flights diverted to Canada; 38 aircraft; 6,656 passengers. Gander, NL housed many aircraft for 3-4 days."},
+  {cat:'numbers',q:"What is the minimum horizontal cloud clearance in uncontrolled airspace at 1,500 ft AGL?",opts:["500 ft","1 mile","2,000 ft","Clear of cloud"],a:2,exp:"Uncontrolled ≥1,000 ft AGL = 2,000 ft horizontal. This is different from controlled airspace (1 mile)."},
+  {cat:'numbers',q:"VFR night aeroplane fuel reserve beyond destination:",opts:["20 min","30 min","45 min","60 min"],a:2,exp:"VFR Night Aeroplane = 45 min. VFR Day Aeroplane = 30 min. Helicopter = 20 min day or night."},
+  {cat:'numbers',q:"What is the maximum flight time in any 28 consecutive days?",opts:["100 hours","120 hours","150 hours","180 hours"],a:2,exp:"150 hours in any 28 consecutive days. 1,200 hours in any 365 consecutive days."},
+  {cat:'numbers',q:"What is the standard pressure altimeter setting?",opts:["29.92 in Hg / 1,013.2 mb","30.00 in Hg / 1,015.0 mb","29.29 in Hg / 992.0 mb","28.92 in Hg / 979.0 mb"],a:0,exp:"29.92 in Hg / 1,013.2 mb — set this in the standard pressure region above 18,000 ft ASL."},
+  {cat:'numbers',q:"How many T/Os and landings are required in the past 90 days for a 703 Air Taxi PIC?",opts:["5 T/O + 5 landings","3 T/O + 3 landings in the same type","3 T/O + 3 landings in any aircraft","10 T/O + 10 landings"],a:1,exp:"703 Air Taxi = 3 T/Os and 3 landings in the same type within the past 90 days. This is in addition to the standard 6-month currency."},
+  {cat:'numbers',q:"What transponder code indicates a hijacking?",opts:["7600","7700","7500","7200"],a:2,exp:"7500 = Hijack · 7600 = Comms failure · 7700 = Emergency. Remember: 5-6-7 = Hi-NORDO-Emergency"},
+  // Medical correction quiz question
+  {cat:'airlaw',q:"Which medical category is required for a CPL holder to exercise commercial privileges?",opts:["Category 3","Category 4","Category 1","Category 2"],a:2,exp:"Category 1 is required for CPL commercial privileges. Category 3 is for PPL — a very common exam trap. A CPL holder with an expired Cat 1 may use Cat 3 only for PPL privileges, never for commercial operations."},
+  // Overwater
+  {cat:'airlaw',q:"A single-engine aeroplane is flying overwater. At what distance from a suitable emergency landing site are life rafts required? (CAR 602.63)",opts:["50 NM or 15 min","100 NM or 30 min — whichever is less","200 NM or 60 min","25 NM or 10 min"],a:1,exp:"CAR 602.63(1): Life rafts required beyond 100 NM or 30 minutes of flight at cruising speed from a suitable emergency landing site, whichever is less."},
+  {cat:'airlaw',q:"A transport category multi-engine aeroplane is flying overwater. Up to what distance from a suitable landing site can it fly WITHOUT life rafts? (CAR 602.63(3))",opts:["200 NM or 60 min","300 NM or 90 min","400 NM or 120 min — whichever is less","No exception — life rafts always required for multi-engine"],a:2,exp:"CAR 602.63(3): Transport category aeroplanes may operate up to 400 NM or 120 minutes from a suitable emergency landing site without life rafts — this is the exception to the 200 NM / 60 min rule."},
+  {cat:'airlaw',q:"A helicopter is operating over water at 8°C. What must the PIC do? (CAR 602.63(7))",opts:["Carry extra life preservers only","Obtain a special weather clearance","Ensure helicopter transportation suit systems are provided for ALL persons AND direct everyone to wear them","Descend below 500 ft AGL"],a:2,exp:"CAR 602.63(7): When water temperature is less than 10°C, the PIC must ensure passenger and crew transportation suit systems are provided and must direct all persons on board to wear them."},
+  {cat:'airlaw',q:"When are life preservers required on a land aeroplane? (CAR 602.62)",opts:["Only beyond 100 NM from shore","Beyond gliding distance to shore on engine failure OR beyond 50 NM from shore","Only on IFR overwater flights","Only at night over water"],a:1,exp:"CAR 602.62(1): Required beyond the point the aircraft could reach shore on engine failure. CAR 602.62(2): For land aeroplanes/helicopters, life preservers for ALL persons when more than 50 NM from shore."},
+  // Oxygen transport category
+  {cat:'airlaw',q:"For an unpressurized aircraft in air transport service above 13,000 ft ASL, what is the MINIMUM oxygen supply required? (CAR 605.31(1))",opts:["30 min for crew only","45 min for crew and 10% of pax","1 hour for ALL persons on board","Only while actually above 13,000 ft"],a:2,exp:"CAR 605.31(1) Item 2b: For aircraft in air transport service above 13,000 ft ASL, the minimum oxygen supply is not less than 1 HOUR for ALL persons on board. This is the transport category key distinction."},
+  {cat:'airlaw',q:"For flight crew on a pressurized aircraft certified above FL250 in air transport service, what is the minimum oxygen supply? (CAR 605.31(2))",opts:["30 minutes","1 hour","2 hours","45 minutes"],a:2,exp:"CAR 605.31(2) Item 1c(ii): Not less than 2 hours for flight crew. The formula: descent from max altitude to 10,000 ft in 10 min, then 110 min at 10,000 ft = 2 hours total."},
+  // ADIZ
+  {cat:'airlaw',q:"A VFR pilot departing OUTSIDE the ADIZ intends to enter it. What must be done regarding the ADIZ entry? (CAR 602.145(3))",opts:["File a NOTAM only","Obtain ATC clearance to enter","Indicate estimated ADIZ entry in the flight plan AND radio a position report as soon as possible after take-off","No action required — ADIZ entry is unrestricted for VFR"],a:2,exp:"CAR 602.145(3)(b): Must indicate the estimated time and point of ADIZ entry in the flight plan/itinerary, AND as soon as possible after take-off, radio a position report (location, altitude, departure aerodrome, estimated ADIZ entry time and point) to ATC, FSS, or CARS."},
+  {cat:'airlaw',q:"When must a VFR pilot revise their ADIZ entry report? (CAR 602.145(5))",opts:["Whenever route changes by any amount","When more than ±5 min off estimated time OR more than 20 NM off route/entry point","Only if declaring an emergency","When fuel falls below minimums"],a:1,exp:"CAR 602.145(5): Must revise and report when NOT expected to arrive within ±5 minutes of estimated time at a reporting point/ADIZ entry/destination, OR within 20 NM of the estimated ADIZ entry point or route centre line."},
+  // ESCAT
+  {cat:'airlaw',q:"Under the ESCAT Plan, a PIC outside controlled airspace must provide position reports how often? (CAR 602.146)",opts:["Every 10 minutes","Every 15 minutes","Every 30 minutes","Only on request from ATC"],a:2,exp:"CAR 602.146(c)(ii): When operating outside controlled airspace with ESCAT implemented, the PIC must provide position reports to the appropriate ATS unit at least every 30 minutes."},
+];
+
+// ==================== STATE ====================
+let currentTopicId = null;
+let fcCards = [...allCards];
+let fcIndex = 0;
+let fcFlipped = false;
+let fcStatus = {};
+let quizCat = 'all';
+let quizQs = [];
+let quizIdx = 0;
+let quizAnswers = [];
+let numbersHidden = {};
+
+// ==================== NAVIGATION ====================
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  event && event.currentTarget && event.currentTarget.classList.add('active');
+  // set nav btn active
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'"+id+"'")) b.classList.add('active');
+  });
+  if (id === 'topics' && !document.getElementById('topicGrid').children.length) buildTopics();
+  if (id === 'numbers' && !document.getElementById('numbersGrid').children.length) buildNumbers();
+  if (id === 'accidents' && !document.getElementById('accidentTimeline').children.length) buildAccidents();
+  if (id === 'flashcards') initFlashcards();
+  if (id === 'quiz') resetQuizView();
+}
+
+// ==================== TOPICS ====================
+function buildTopics() {
+  const grid = document.getElementById('topicGrid');
+  grid.innerHTML = topics.map((t, i) => `
+    <div class="topic-card" onclick="openTopic('${t.id}')" data-name="${t.name.toLowerCase()} ${t.short.toLowerCase()}">
+      <div class="topic-num">Topic ${String(i+1).padStart(2,'0')}</div>
+      <div class="topic-name">${t.name}</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px">${t.short}</div>
+      <span class="topic-tag tag-${t.tag}">${t.tag === 'airlaw' ? 'Air Law' : t.tag === 'history' ? 'History' : 'Both'}</span>
+    </div>`).join('');
+}
+
+function filterTopics(val) {
+  const v = val.toLowerCase();
+  document.querySelectorAll('.topic-card').forEach(c => {
+    c.style.display = c.dataset.name.includes(v) ? '' : 'none';
+  });
+}
+
+function openTopic(id) {
+  const t = topics.find(x => x.id === id);
+  if (!t) return;
+  document.getElementById('topics-list-view').style.display = 'none';
+  document.getElementById('topics-detail-view').style.display = 'block';
+  document.getElementById('detail-content').innerHTML = `
+    <div class="detail-title">${t.name}</div>
+    <div class="detail-sub"><span class="topic-tag tag-${t.tag}">${t.tag === 'airlaw' ? 'Air Law' : t.tag === 'history' ? 'History' : 'Air Law & History'}</span></div>
+    ${t.content}`;
+  window.scrollTo(0, 0);
+}
+
+function closeDetail() {
+  document.getElementById('topics-list-view').style.display = 'block';
+  document.getElementById('topics-detail-view').style.display = 'none';
+}
+
+// ==================== NUMBERS ====================
+function buildNumbers() {
+  const grid = document.getElementById('numbersGrid');
+  grid.innerHTML = masterNumbers.map((n, i) => `
+    <div class="num-card num-hidden" id="nc-${i}" onclick="toggleNum(${i})">
+      <div class="num-q">${n.q}</div>
+      <div class="num-a">${n.a}</div>
+    </div>`).join('');
+  masterNumbers.forEach((_, i) => { numbersHidden[i] = true; });
+}
+
+function toggleNum(i) {
+  const el = document.getElementById('nc-' + i);
+  numbersHidden[i] = !numbersHidden[i];
+  el.className = 'num-card' + (numbersHidden[i] ? ' num-hidden' : '');
+}
+
+function revealAll() {
+  masterNumbers.forEach((_, i) => { numbersHidden[i] = false; document.getElementById('nc-'+i).className = 'num-card'; });
+}
+
+function hideAll() {
+  masterNumbers.forEach((_, i) => { numbersHidden[i] = true; document.getElementById('nc-'+i).className = 'num-card num-hidden'; });
+}
+
+// ==================== ACCIDENTS ====================
+function buildAccidents() {
+  document.getElementById('accidentTimeline').innerHTML = accidents.map(a => `
+    <div class="accident-item">
+      <div class="accident-year">${a.year}</div>
+      <div class="accident-title">${a.title}</div>
+      <div style="font-size:13px;color:var(--muted);margin:4px 0">${a.cause}</div>
+      <div class="accident-result">→ ${a.result}</div>
+    </div>`).join('');
+}
+
+// ==================== FLASHCARDS ====================
+function initFlashcards() {
+  fcCards = [...allCards];
+  fcIndex = 0; fcFlipped = false;
+  renderCard();
+}
+
+function filterFlashcards(val) {
+  if (val === 'all') fcCards = [...allCards];
+  else if (val === 'review') fcCards = allCards.filter(c => fcStatus[allCards.indexOf(c)] === 'review');
+  else fcCards = allCards.filter(c => c.cat === val);
+  fcIndex = 0; fcFlipped = false;
+  renderCard();
+}
+
+function shuffleCards() {
+  for (let i = fcCards.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [fcCards[i],fcCards[j]] = [fcCards[j],fcCards[i]];
+  }
+  fcIndex = 0; fcFlipped = false; renderCard();
+}
+
+function resetCards() { fcStatus = {}; initFlashcards(); }
+
+function renderCard() {
+  if (!fcCards.length) {
+    document.getElementById('fcQ').textContent = 'No cards in this filter.';
+    document.getElementById('fcA').textContent = '';
+    document.getElementById('fcCounter').textContent = '';
+    document.getElementById('fcProgress').innerHTML = '';
+    return;
+  }
+  const c = fcCards[Math.min(fcIndex, fcCards.length-1)];
+  document.getElementById('fcQ').textContent = c.q;
+  document.getElementById('fcA').textContent = c.a;
+  document.getElementById('fcInner').classList.remove('flipped');
+  fcFlipped = false;
+  document.getElementById('fcCounter').textContent = `${Math.min(fcIndex+1, fcCards.length)} / ${fcCards.length}`;
+  const known = Object.values(fcStatus).filter(v=>v==='known').length;
+  const review = Object.values(fcStatus).filter(v=>v==='review').length;
+  document.getElementById('fcProgress').innerHTML = fcCards.map((_, i) => {
+    const origIdx = allCards.indexOf(fcCards[i]);
+    const s = fcStatus[origIdx];
+    const cls = s === 'known' ? 'known' : s === 'review' ? 'review' : i === fcIndex ? 'current' : '';
+    return `<div class="fc-dot ${cls}"></div>`;
+  }).join('');
+}
+
+function flipCard() {
+  fcFlipped = !fcFlipped;
+  document.getElementById('fcInner').classList.toggle('flipped', fcFlipped);
+}
+
+function nextCard() {
+  if (fcIndex < fcCards.length - 1) fcIndex++;
+  else fcIndex = 0;
+  renderCard();
+}
+
+function prevCard() {
+  if (fcIndex > 0) fcIndex--;
+  else fcIndex = fcCards.length - 1;
+  renderCard();
+}
+
+function markCard(status) {
+  const origIdx = allCards.indexOf(fcCards[Math.min(fcIndex, fcCards.length-1)]);
+  fcStatus[origIdx] = status;
+  nextCard();
+}
+
+// ==================== QUIZ ====================
+function selectCat(cat) {
+  quizCat = cat;
+  document.querySelectorAll('.quiz-cat-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('cat-' + cat).classList.add('selected');
+}
+
+function resetQuizView() {
+  document.getElementById('quiz-setup-view').style.display = 'block';
+  document.getElementById('quiz-active-view').style.display = 'none';
+  document.getElementById('quiz-result-view').style.display = 'none';
+}
+
+function startQuiz() {
+  let pool = quizCat === 'all' ? quizQuestions : quizQuestions.filter(q => q.cat === quizCat);
+  const count = parseInt(document.getElementById('quizCount').value);
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  quizQs = shuffled.slice(0, Math.min(count, shuffled.length));
+  quizIdx = 0;
+  quizAnswers = new Array(quizQs.length).fill(null);
+  document.getElementById('quiz-setup-view').style.display = 'none';
+  document.getElementById('quiz-active-view').style.display = 'block';
+  renderQuizQ();
+}
+
+function renderQuizQ() {
+  const pct = Math.round((quizIdx / quizQs.length) * 100);
+  document.getElementById('quizProgFill').style.width = pct + '%';
+  if (quizIdx >= quizQs.length) { showQuizResults(); return; }
+  const q = quizQs[quizIdx];
+  const answered = quizAnswers[quizIdx] !== null;
+  document.getElementById('quizContent').innerHTML = `
+    <div class="quiz-q-card">
+      <div class="quiz-qnum">Question ${quizIdx+1} of ${quizQs.length} — <span class="topic-tag tag-${q.cat}" style="font-size:11px">${q.cat === 'airlaw' ? 'Air Law' : q.cat === 'history' ? 'History' : 'Numbers'}</span></div>
+      <div class="quiz-qtext">${q.q}</div>
+      <div class="quiz-options">
+        ${q.opts.map((opt, i) => {
+          let cls = 'quiz-opt';
+          if (answered) {
+            if (i === q.a) cls += ' correct';
+            else if (quizAnswers[quizIdx] === i) cls += ' incorrect';
+          }
+          return `<button class="${cls}" onclick="answerQuiz(${i})" ${answered ? 'disabled' : ''}>${String.fromCharCode(65+i)}. ${opt}</button>`;
+        }).join('')}
+      </div>
+      ${answered ? `<div class="quiz-expl"><strong>Explanation:</strong> ${q.exp}</div>` : ''}
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <button class="btn btn-ghost" onclick="quizPrev()" ${quizIdx === 0 ? 'disabled' : ''}>← Prev</button>
+      ${answered ? `<button class="btn btn-primary" onclick="quizNext()">${quizIdx === quizQs.length-1 ? 'See Results →' : 'Next →'}</button>` : '<span style="font-size:13px;color:var(--muted)">Select an answer</span>'}
+    </div>`;
+}
+
+function answerQuiz(i) {
+  if (quizAnswers[quizIdx] !== null) return;
+  quizAnswers[quizIdx] = i;
+  renderQuizQ();
+}
+
+function quizNext() {
+  if (quizIdx < quizQs.length - 1) { quizIdx++; renderQuizQ(); }
+  else showQuizResults();
+}
+
+function quizPrev() { if (quizIdx > 0) { quizIdx--; renderQuizQ(); } }
+
+function showQuizResults() {
+  document.getElementById('quiz-active-view').style.display = 'none';
+  document.getElementById('quiz-result-view').style.display = 'block';
+  let correct = 0, lawC = 0, lawT = 0, histC = 0, histT = 0;
+  quizQs.forEach((q, i) => {
+    const right = quizAnswers[i] === q.a;
+    if (right) correct++;
+    if (q.cat === 'airlaw' || q.cat === 'numbers') { lawT++; if (right) lawC++; }
+    else { histT++; if (right) histC++; }
+  });
+  const pct = Math.round(correct / quizQs.length * 100);
+  const grade = pct >= 90 ? 'Excellent ✈' : pct >= 75 ? 'Good work' : pct >= 60 ? 'Passing' : 'Keep studying';
+  const col = pct >= 90 ? 'var(--green)' : pct >= 75 ? 'var(--gold)' : pct >= 60 ? 'var(--accent)' : 'var(--red)';
+  document.getElementById('resultScore').textContent = pct + '%';
+  document.getElementById('resultScore').style.color = col;
+  document.getElementById('resultLabel').textContent = `${correct} / ${quizQs.length} correct — ${grade}`;
+  document.getElementById('resultBreakdown').innerHTML = `
+    <div class="score-mini"><div class="score-mini-n">${correct}</div><div class="score-mini-l">Correct</div></div>
+    <div class="score-mini"><div class="score-mini-n">${lawT ? lawC+'/'+lawT : '—'}</div><div class="score-mini-l">Air Law</div></div>
+    <div class="score-mini"><div class="score-mini-n">${histT ? histC+'/'+histT : '—'}</div><div class="score-mini-l">History</div></div>`;
+  document.getElementById('quizReview').innerHTML = quizQs.map((q, i) => {
+    const right = quizAnswers[i] === q.a;
+    if (right) return '';
+    return `<div class="quiz-q-card" style="border-left:3px solid var(--red);margin-bottom:10px">
+      <div class="quiz-qnum" style="color:var(--red)">✗ Missed — ${q.cat}</div>
+      <div class="quiz-qtext" style="font-size:14px">${q.q}</div>
+      <div style="margin-top:8px;font-size:13px">
+        <div style="color:var(--red)">Your answer: ${quizAnswers[i] !== null ? q.opts[quizAnswers[i]] : 'Not answered'}</div>
+        <div style="color:var(--green);margin-top:4px">Correct: ${q.opts[q.a]}</div>
+        <div style="color:var(--muted);margin-top:6px;font-style:italic">${q.exp}</div>
+      </div></div>`;
+  }).join('');
+}
+
+function retakeQuiz() {
+  document.getElementById('quiz-result-view').style.display = 'none';
+  document.getElementById('quiz-setup-view').style.display = 'block';
+}
+
+// ==================== INIT ====================
+buildTopics();
+buildNumbers();
+buildAccidents();
+initFlashcards();
+</script>
+</body>
+</html>
